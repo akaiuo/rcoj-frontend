@@ -23,9 +23,9 @@
       </a-menu>
     </a-col>
     <a-col flex="100px">
-      <a-col flex="100px">
-        <div>{{ store.state.user?.loginUser?.userName ?? "未登录1" }}</div>
-      </a-col>
+      <span id="username" @click="handleUsername">
+        {{ store.state.user?.loginUser?.userName ?? "未登录" }}
+      </span>
     </a-col>
   </a-row>
 </template>
@@ -36,7 +36,6 @@ import router from "@/router";
 import { computed, ref } from "vue";
 import { useStore } from "vuex";
 import checkAccess from "@/access/checkAccess";
-import ACCESS_ENUM from "@/access/accessEnum";
 
 //默认主页
 const selectedKey = ref(["/"]);
@@ -47,20 +46,11 @@ router.afterEach((to, from, failure) => {
 });
 
 const doMenuClick = (key: string) => {
-  console.log(key);
   router.push({
     path: key,
   });
 };
 const store = useStore();
-
-//模拟登录
-setTimeout(() => {
-  store.dispatch("user/getLoginUser", {
-    userName: "java大王",
-    userRole: ACCESS_ENUM.ADMIN,
-  });
-}, 3000);
 
 // 过滤路由
 const visibleRoutes = computed(() => {
@@ -75,6 +65,12 @@ const visibleRoutes = computed(() => {
     return false;
   });
 });
+
+const handleUsername = () => {
+  router.push({
+    path: "/user/info",
+  });
+};
 </script>
 
 <style scoped>
@@ -91,5 +87,10 @@ const visibleRoutes = computed(() => {
   color: black;
   font-size: 20px;
   margin-left: 16px;
+}
+
+#username {
+  font-size: 16px;
+  cursor: pointer;
 }
 </style>

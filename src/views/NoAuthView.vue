@@ -1,5 +1,5 @@
 <script setup lang="ts"></script>
 
 <template>
-  <div>无权限访问</div>
+  <h1 align="center">403 - 无权限访问</h1>
 </template>

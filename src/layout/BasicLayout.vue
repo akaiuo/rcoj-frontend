@@ -18,28 +18,27 @@
 import GlobalHeader from "@/components/GlobalHeader.vue";
 </script>
 
-<style>
+<style scoped>
 #basicLayout {
 }
 
 #basicLayout .header {
   margin-bottom: 8px;
   box-shadow: #eee 1px 1px 5px;
+  position: relative;
+  left: 0;
+  right: 0;
+  top: 0;
 }
 
 #basicLayout .content {
-  background: linear-gradient(to right, #bbb, #fff);
-  margin-bottom: 16px;
-  padding: 20px;
+  background: white;
+  min-width: 600px;
 }
 
 #basicLayout .footer {
   background: #efefef;
   padding: 16px;
-  position: absolute; /* 绝对定位，不占据盒子空间 */
-  bottom: 0; /* 底部间距0 */
-  left: 0; /* 左间距0 */
-  right: 0; /* 右间距0 */
   text-align: center;
 }
 </style>

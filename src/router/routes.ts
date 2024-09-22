@@ -1,22 +1,47 @@
 import { RouteRecordRaw } from "vue-router";
-import HomeView from "@/views/HomeView.vue";
+import ExampleView from "@/views/ExampleView.vue";
 import AdminView from "@/views/AdminView.vue";
 import NoAuthView from "@/views/NoAuthView.vue";
-import AboutView from "@/views/AboutView.vue";
+import UserLoginView from "@/views/user/UserLoginView.vue";
+import UserRegisterView from "@/views/user/UserRegisterView.vue";
+import UserLayout from "@/layout/UserLayout.vue";
+import AddQuestionView from "@/views/question/AddQuestionView.vue";
+import manageQuestionView from "@/views/question/ManageQuestionView.vue";
+import UserInfoView from "@/views/user/UserInfoView.vue";
+import ACCESS_ENUM from "@/access/accessEnum";
+import QuestionListView from "@/views/question/QuestionListView.vue";
+import QuestionView from "@/views/question/QuestionView.vue";
 
 export const routes: Array<RouteRecordRaw> = [
   {
+    path: "/user",
+    name: "用户",
+    component: UserLayout,
+    children: [
+      {
+        path: "/user/login",
+        name: "用户登录",
+        component: UserLoginView,
+      },
+      {
+        path: "/user/register",
+        name: "用户注册",
+        component: UserRegisterView,
+      },
+    ],
+  },
+  {
     path: "/",
     name: "主页",
-    component: HomeView,
+    component: ExampleView,
     meta: {
       visibleHead: true,
     },
   },
   {
-    path: "/about",
+    path: "/list/question",
     name: "题库",
-    component: AboutView,
+    component: QuestionListView,
     meta: {
       visibleHead: true,
     },
@@ -30,8 +55,46 @@ export const routes: Array<RouteRecordRaw> = [
     name: "管理",
     component: AdminView,
     meta: {
-      access: "admin",
+      access: ACCESS_ENUM.ADMIN,
       visibleHead: true,
+    },
+  },
+  {
+    path: "/add/question",
+    name: "创建题目",
+    component: AddQuestionView,
+    meta: {
+      visibleHead: true,
+    },
+  },
+  {
+    path: "/manage/question",
+    name: "管理题目",
+    component: manageQuestionView,
+    meta: {
+      visibleHead: true,
+    },
+  },
+  {
+    path: "/edit/question",
+    name: "编辑题目",
+    component: AddQuestionView,
+  },
+  {
+    path: "/user/info",
+    name: "我的主页",
+    component: UserInfoView,
+    meta: {
+      visibleHead: false,
+      access: ACCESS_ENUM.ADMIN,
+    },
+  },
+  {
+    path: "/view/question/:id",
+    props: true,
+    component: QuestionView,
+    meta: {
+      visibleHead: false,
     },
   },
 ];
