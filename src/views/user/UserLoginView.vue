@@ -43,7 +43,7 @@ const handleSubmit = async () => {
         <a-input v-model="form.userAccount" />
       </a-form-item>
       <a-form-item field="userPassword" label="密码">
-        <a-input v-model="form.userPassword" />
+        <a-input-password v-model="form.userPassword" />
       </a-form-item>
       <a-form-item>
         <div style="margin-left: 25%">

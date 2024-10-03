@@ -97,6 +97,7 @@
       <a-form-item
         :label="'测试用例'"
         :wrapper-col-style="caseStyle"
+        :rules="[{ required: true }]"
       ></a-form-item>
       <a-form-item
         v-for="(post, index) of form.judgeCase"
@@ -245,10 +246,20 @@ const contentHandleChange = (val: string) => {
   form.value.content = val;
 };
 const handleSubmit = async () => {
+  let cancelSubmit = false;
+  if (form.value.title === "") {
+    message.warning("请输入标题");
+    cancelSubmit = true;
+  }
+  if (form.value.content === "") {
+    message.warning("请输入题目内容");
+    cancelSubmit = true;
+  }
   if (form.value.judgeCase.length == 0) {
     message.warning("请至少添加一个测试用例");
-    return;
+    cancelSubmit = true;
   }
+  if (cancelSubmit) return;
   if (form.value.title && form.value.content) {
     const resp = await QuestionControllerService.addQuestionUsingPost(
       form.value as QuestionEditRequest

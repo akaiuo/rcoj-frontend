@@ -3,6 +3,9 @@
     <template v-if="route.path.startsWith('/user')">
       <router-view />
     </template>
+    <template v-if="route.path.startsWith('/view')">
+      <QuestionLayout />
+    </template>
     <template v-else>
       <basic-layout />
     </template>
@@ -18,6 +21,7 @@
 import BasicLayout from "@/layout/BasicLayout.vue";
 import { onMounted } from "vue";
 import { useRoute } from "vue-router";
+import QuestionLayout from "@/layout/QuestionLayout.vue";
 
 const route = useRoute();
 
