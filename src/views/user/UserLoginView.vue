@@ -3,7 +3,7 @@ import { reactive } from "vue";
 import { UserControllerService, UserLoginRequest } from "../../../generated";
 import message from "@arco-design/web-vue/es/message";
 import { useStore } from "vuex";
-import { useRouter } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 
 const form = reactive({
   userAccount: "",
@@ -11,16 +11,17 @@ const form = reactive({
 } as UserLoginRequest);
 
 const store = useStore();
-const route = useRouter();
+const router = useRouter();
+const route = useRoute();
 const handleSubmit = async () => {
   const resp = await UserControllerService.userLoginUsingPost(form);
   // 登录成功，跳转到主页
   if (resp.code === 0) {
-    // todo 跳转到转发的页面，dispatch参数
+    // 跳转到转发的页面，dispatch参数
     await store.dispatch("user/getLoginUser");
-    // store.state.user.userName = resp.userName;
-    route.push({
-      path: "/",
+    store.state.user.userName = resp.userName;
+    await router.push({
+      path: route.query.redirect as string,
       replace: true,
     });
   } else {

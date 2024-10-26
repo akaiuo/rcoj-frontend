@@ -61,7 +61,7 @@
         <MdEditor
           :value="form.content"
           :handle-change="contentHandleChange"
-          style="width: 1400px"
+          style="width: 1400px; z-index: 10"
         />
       </a-form-item>
       <a-form-item field="time" label="时间限制">

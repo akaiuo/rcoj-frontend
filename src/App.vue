@@ -3,7 +3,7 @@
     <template v-if="route.path.startsWith('/user')">
       <router-view />
     </template>
-    <template v-if="route.path.startsWith('/view')">
+    <template v-if="route.path.startsWith('/view/question')">
       <QuestionLayout />
     </template>
     <template v-else>

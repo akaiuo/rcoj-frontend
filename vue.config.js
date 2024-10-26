@@ -13,6 +13,7 @@ module.exports = defineConfig({
         pathRewrite: { "^/api": "" },
       },
     },
+    allowedHosts: "all",
   },
   chainWebpack(config) {
     config.plugin("monaco").use(new MonacoWebpackPlugin());

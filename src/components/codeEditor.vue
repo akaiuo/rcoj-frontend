@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import * as monaco from "monaco-editor";
+import { editor } from "monaco-editor";
 import { defineProps, onMounted, ref, toRaw, watch, withDefaults } from "vue";
+import LineNumbersType = editor.LineNumbersType;
 
 interface Props {
   value: string;
@@ -10,6 +12,8 @@ interface Props {
   theme: string;
   handleChange: (val: string) => void;
   height: string;
+  readOnly: boolean;
+  lineNumbers: LineNumbersType;
 }
 
 // 设置默认值
@@ -21,6 +25,8 @@ const props = withDefaults(defineProps<Props>(), {
   theme: "vs",
   handleChange: (val: string) => null,
   height: "100vh",
+  readOnly: false,
+  lineNumbers: "on",
 });
 
 const codeEditorRef = ref();
@@ -38,13 +44,7 @@ watch(
   }
 );
 
-watch(
-  () => props.fontSize,
-  () => {
-    // todo 更改字号
-    console.log(codeEditorRef.value);
-  }
-);
+// todo 更改字号
 
 watch(
   () => props.theme,
@@ -68,8 +68,12 @@ onMounted(() => {
     minimap: {
       enabled: false,
     },
-    readOnly: false,
+    readOnly: props.readOnly,
     fontSize: 15,
+    lineNumbers: props.lineNumbers,
+  });
+  codeEditor.value.onDidChangeModelContent(() => {
+    props.handleChange(toRaw(codeEditor.value).getValue());
   });
 });
 </script>
@@ -82,7 +86,6 @@ onMounted(() => {
       style="margin: 6px"
       :style="{ height }"
     />
-    {{ codeEditorRef?.fontSize }}
   </div>
 </template>
 

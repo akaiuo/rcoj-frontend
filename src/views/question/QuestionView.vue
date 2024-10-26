@@ -68,6 +68,8 @@
           :handle-change="editorInput"
           :font-size="editorSettings.fontSize"
           :theme="editorSettings.theme"
+          :value="req.code"
+          :tab-size="4"
           :height="'83vh'"
         />
       </template>
@@ -109,19 +111,6 @@
           </div>
         </a-space>
       </div>
-      <!--      <div id="middle">-->
-      <!--        <a-space>-->
-      <!--          <div>-->
-      <!--            <a-button>上一题</a-button>-->
-      <!--          </div>-->
-      <!--          <div>-->
-      <!--            <span>1 / 1000</span>-->
-      <!--          </div>-->
-      <!--          <div>-->
-      <!--            <a-button>下一题</a-button>-->
-      <!--          </div>-->
-      <!--        </a-space>-->
-      <!--      </div>-->
       <div id="right" style="float: right">
         <a-space>
           <div>
@@ -188,10 +177,7 @@
 
 <script setup lang="ts">
 import { defineProps, onMounted, ref, withDefaults } from "vue";
-import {
-  QuestionControllerService,
-  QuestionSubmitControllerService,
-} from "../../../generated";
+import { QuestionControllerService } from "../../../generated";
 import message from "@arco-design/web-vue/es/message";
 import MdViewer from "@/components/MdViewer.vue";
 import CodeEditor from "@/components/codeEditor.vue";
@@ -243,7 +229,8 @@ const submitQuestion = async () => {
   if (!question.value?.id) {
     return;
   }
-  const resp = await QuestionSubmitControllerService.doQuestionSubmitUsingPost({
+  console.log(req.value.code);
+  const resp = await QuestionControllerService.doQuestionSubmitUsingPost({
     code: req.value.code,
     lang: req.value.lang,
     questionId: question.value.id,

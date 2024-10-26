@@ -36,6 +36,7 @@ import router from "@/router";
 import { computed, ref } from "vue";
 import { useStore } from "vuex";
 import checkAccess from "@/access/checkAccess";
+import { Message } from "@arco-design/web-vue";
 
 //默认主页
 const selectedKey = ref(["/"]);

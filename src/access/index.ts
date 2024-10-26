@@ -1,6 +1,6 @@
 import router from "@/router";
 import store from "@/store";
-import ACCESS_ENUM from "@/access/accessEnum";
+import ACCESS_ENUM from "@/enums/accessEnum";
 import checkAccess from "@/access/checkAccess";
 
 router.beforeEach(async (to, from, next) => {

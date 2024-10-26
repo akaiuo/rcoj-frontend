@@ -4,7 +4,13 @@
       <template #optional="{ record }">
         <a-space>
           <a-button @click="editRow(record)" type="primary">编辑</a-button>
-          <a-button @click="deleteRow(record)" status="danger">删除</a-button>
+          <a-popconfirm
+            content="确定删除?"
+            type="error"
+            @ok="deleteRow(record)"
+          >
+            <a-button status="danger">删除</a-button>
+          </a-popconfirm>
         </a-space>
       </template>
     </a-table>
@@ -89,7 +95,6 @@ const loadData = async () => {
   }
   dataList.value = resp.data.records;
   total.value = resp.data.total;
-  console.log(resp.data.records);
 };
 
 const route = useRouter();

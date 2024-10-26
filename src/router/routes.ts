@@ -8,9 +8,11 @@ import UserLayout from "@/layout/UserLayout.vue";
 import AddQuestionView from "@/views/question/AddQuestionView.vue";
 import manageQuestionView from "@/views/question/ManageQuestionView.vue";
 import UserInfoView from "@/views/user/UserInfoView.vue";
-import ACCESS_ENUM from "@/access/accessEnum";
+import ACCESS_ENUM from "@/enums/accessEnum";
 import QuestionListView from "@/views/question/QuestionListView.vue";
 import QuestionView from "@/views/question/QuestionView.vue";
+import QuestionSubmitListView from "@/views/question/QuestionSubmitListView.vue";
+import QuestionSubmitInfoView from "@/views/question/QuestionSubmitInfoView.vue";
 
 export const routes: Array<RouteRecordRaw> = [
   {
@@ -95,6 +97,25 @@ export const routes: Array<RouteRecordRaw> = [
     component: QuestionView,
     meta: {
       visibleHead: false,
+    },
+  },
+  {
+    path: "/list/question/submit",
+    name: "我的提交",
+    component: QuestionSubmitListView,
+    meta: {
+      visibleHead: true,
+      access: ACCESS_ENUM.USER,
+    },
+  },
+  {
+    path: "/view/submit/:submitId",
+    name: "提交详情",
+    props: true,
+    component: QuestionSubmitInfoView,
+    meta: {
+      visibleHead: false,
+      access: ACCESS_ENUM.USER,
     },
   },
 ];

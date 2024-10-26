@@ -1,4 +1,4 @@
-import ACCESS_ENUM from "@/access/accessEnum";
+import ACCESS_ENUM from "@/enums/accessEnum";
 
 /**
  * 检查权限 （判断当前登录用户是否具有某个权限）
@@ -12,7 +12,9 @@ const checkAccess = (loginUser: any, needAccess = ACCESS_ENUM.NOT_LOGIN) => {
   if (needAccess === ACCESS_ENUM.NOT_LOGIN) return true;
   // 用户登录才能访问
   if (needAccess === ACCESS_ENUM.USER)
-    if (loginUserAccess !== ACCESS_ENUM.NOT_LOGIN) return false;
+    if (loginUserAccess === ACCESS_ENUM.NOT_LOGIN) {
+      return false;
+    }
 
   if (needAccess === ACCESS_ENUM.ADMIN)
     if (loginUserAccess !== ACCESS_ENUM.ADMIN)
