@@ -19,9 +19,8 @@ const handleSubmit = async () => {
   if (resp.code === 0) {
     // 跳转到转发的页面，dispatch参数
     await store.dispatch("user/getLoginUser");
-    store.state.user.userName = resp.userName;
     await router.push({
-      path: route.query.redirect as string,
+      path: (route.query.redirect as string) ?? "/",
       replace: true,
     });
   } else {

@@ -1,11 +1,8 @@
 <template>
-  <div id="QuestionSubmitListView">
+  <div id="mySubmit">
     <a-form :layout="'inline'">
       <a-form-item field="title" label="题目">
         <a-input v-model="search.title" style="max-width: 400px" />
-      </a-form-item>
-      <a-form-item field="userName" label="提交用户">
-        <a-input v-model="search.user" style="max-width: 400px" />
       </a-form-item>
       <a-form-item field="lang" label="语言">
         <a-select :style="{ width: '120px' }" v-model="search.lang">
@@ -14,14 +11,14 @@
           <a-option>python</a-option>
         </a-select>
       </a-form-item>
-      <a-button @click="handleSearch" :type="'primary'">搜索</a-button>
-      <a-button
-        :type="'primary'"
-        id="mySubmit"
-        @click="handleMySubmit"
-        v-show="store.state.user.loginUser.userName != undefined"
-        >我的提交
-      </a-button>
+      <a-form-item field="lang" label="判题状态">
+        <a-select :style="{ width: '120px' }" v-model="search.lang">
+          <a-option>java</a-option>
+          <a-option>cpp</a-option>
+          <a-option>python</a-option>
+        </a-select>
+      </a-form-item>
+      <a-button @click="handleSearch" :type="'primary'">过滤</a-button>
     </a-form>
     <a-divider />
     <a-table :columns="columns" :data="dataList" :pagination="false">
@@ -30,8 +27,8 @@
       </template>
       <template #judgeState="{ record }">
         <span :style="stateStyle(record.judgeState)">{{
-          judgeState(record.status, record.judgeState)
-        }}</span>
+            judgeState(record.status, record.judgeState)
+          }}</span>
       </template>
       <template #maxTime="{ record }">
         <span>{{ showTime(record.maxTime) }}</span>
@@ -42,52 +39,40 @@
       <template #optional="{ record }">
         <a-space>
           <a-button
-            @click="showInfo(record.submitId)"
-            type="outline"
-            size="small"
-            >详情
+              @click="showInfo(record.submitId)"
+              type="outline"
+              size="small"
+          >详情
           </a-button>
         </a-space>
       </template>
     </a-table>
     <a-pagination
-      :total="total"
-      v-model:page-size="req.pageSize"
-      v-model:current="req.current"
-      show-total
-      show-jumper
-      show-page-size
-      @update:current="loadData"
-      @update:page-size="loadData"
-      :page-size-options="[20, 50, 100]"
-      :size="'large'"
-      style="margin-top: 10px; justify-content: center"
+        :total="total"
+        v-model:page-size="req.pageSize"
+        v-model:current="req.current"
+        show-total
+        show-jumper
+        show-page-size
+        @update:current="loadData"
+        @update:page-size="loadData"
+        :page-size-options="[20, 50, 100]"
+        :size="'large'"
+        style="margin-top: 10px; justify-content: center"
     />
   </div>
 </template>
 
 <script setup lang="ts">
-import { QuestionControllerService } from "../../../generated";
 import { onMounted, ref } from "vue";
 import JUDGE_ENUM from "@/enums/judgeEnum";
 import message from "@arco-design/web-vue/es/message";
 import { useRouter } from "vue-router";
 import moment from "moment/moment";
 import { useStore } from "vuex";
+import {QuestionControllerService} from "../../../../generated";
 
 const columns = [
-  {
-    title: "提交id",
-    dataIndex: "submitId",
-  },
-  {
-    title: "提交用户",
-    dataIndex: "userId",
-  },
-  {
-    title: "提交时间",
-    slotName: "submitTime",
-  },
   {
     title: "问题",
     dataIndex: "question",
@@ -101,17 +86,17 @@ const columns = [
     slotName: "judgeState",
   },
   {
+    title: "提交时间",
+    slotName: "submitTime",
+  },
+  {
     title: "时间",
     slotName: "maxTime",
   },
   {
     title: "内存",
     slotName: "maxMemo",
-  },
-  {
-    title: "操作",
-    slotName: "optional",
-  },
+  }
 ];
 const dataList = ref();
 const total = ref();
@@ -119,25 +104,14 @@ const total = ref();
 const req = ref({
   current: 1,
   pageSize: 20,
-  sortField: "createTime",
-  sortOrder: "descend",
-});
-
-const search = ref({
-  title: "",
-  user: "",
-  lang: "",
 });
 
 const store = useStore();
-const handleMySubmit = () => {
-  search.value.user = store.state.user.loginUser.userName;
-  if (search.value.user == undefined) {
-    message.warning("获取用户信息失败");
-    return;
-  }
-  handleSearch();
-};
+const search = ref({
+  title: "",
+  user: store.state.user.loginUser.userName,
+  lang: "",
+});
 
 const handleSearch = () => {
   alert("search" + JSON.stringify(search.value));
@@ -145,9 +119,9 @@ const handleSearch = () => {
 
 const loadData = async () => {
   const resp =
-    await QuestionControllerService.listQuestionSubmitVoByPageUsingPost(
-      req.value
-    );
+      await QuestionControllerService.listQuestionSubmitVoByPageUsingPost(
+          req.value
+      );
   if (resp.code !== 0) {
     message.warning("获取列表失败：" + resp.message);
     return;
@@ -197,8 +171,8 @@ const stateStyle = (judgeState: string) => {
       fontWeight: "bold",
     };
   } else if (
-    judgeState === JUDGE_ENUM.COMPILE_ERROR ||
-    judgeState === JUDGE_ENUM.RUNTIME_ERROR
+      judgeState === JUDGE_ENUM.COMPILE_ERROR ||
+      judgeState === JUDGE_ENUM.RUNTIME_ERROR
   ) {
     return {
       color: "deepSkyBlue",
@@ -236,13 +210,8 @@ onMounted(() => {
 </script>
 
 <style scoped>
-#QuestionSubmitListView {
-  padding: 32px 10%;
-}
 
 #mySubmit {
-  right: 0;
-  position: absolute;
-  margin-right: 10%;
+  margin: 24px;
 }
 </style>

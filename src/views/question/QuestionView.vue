@@ -5,16 +5,16 @@
       :max="0.7"
       :direction="'horizontal'"
       :style="{
-        height: '85vh',
         width: '100%',
         minWidth: '500px',
         border: '1px solid var(--color-border)',
       }"
+      style="height: calc(100vh - 148px)"
     >
       <template #first>
         <a-tabs :type="'card-gutter'" :size="'medium'">
-          <a-tab-pane key="question" title="问题">
-            <a-card v-if="question" :title="question.title || ''">
+          <a-tab-pane key="question" title="问题" style="z-index: 1">
+            <a-card v-if="question" :title="question.title || ''" class="card">
               <a-descriptions>
                 <a-descriptions-item label="时间限制">
                   {{ question.judgeConf.timeLimit ?? -1 }} ms
@@ -55,10 +55,14 @@
             </a-card>
           </a-tab-pane>
           <a-tab-pane key="comment" title="讨论">
-            Content of Tab Panel 2
+            <a-card class="card">
+              <QuestionComment :question-id="props.id"/>
+            </a-card>
           </a-tab-pane>
-          <a-tab-pane key="answer" title="题解">
-            Content of Tab Panel 3
+          <a-tab-pane key="answer" title="题解" style="z-index: 1">
+            <a-card class="card">
+              <QuestionBlog />
+            </a-card>
           </a-tab-pane>
         </a-tabs>
       </template>
@@ -77,34 +81,30 @@
     <div class="footer">
       <div id="left">
         <a-space size="large">
-          <div id="test">
+          <div class="action" @click="handleThumb">
             <icon-thumb-up
               :size="22"
               v-show="!isThumb"
-              @click="handleThumb"
               class="icon"
             />
             <icon-thumb-up-fill
               :size="22"
-              style="color: darkorange"
+              style="color: steelblue"
               v-show="isThumb"
-              @click="handleThumb"
               class="icon"
             />
             <span> {{ question?.thumbNum ?? "-1" }} </span>
           </div>
-          <div>
+          <div class="action" @click="handleFavor">
             <icon-star
               :size="22"
               v-show="!isFavor"
-              @click="handleFavor"
               class="icon"
             />
             <icon-star-fill
               :size="22"
               style="color: darkorange"
               v-show="isFavor"
-              @click="handleFavor"
               class="icon"
             />
             <span> {{ question?.favourNum ?? "-1" }} </span>
@@ -181,6 +181,8 @@ import { QuestionControllerService } from "../../../generated";
 import message from "@arco-design/web-vue/es/message";
 import MdViewer from "@/components/MdViewer.vue";
 import CodeEditor from "@/components/codeEditor.vue";
+import QuestionComment from "@/components/QuestionComment.vue";
+import QuestionBlog from "@/components/QuestionBlog.vue";
 
 interface Props {
   id: string;
@@ -287,9 +289,6 @@ a-col {
   float: left;
 }
 
-#test {
-}
-
 #middle {
   display: flex;
   align-items: center;
@@ -300,5 +299,24 @@ a-col {
   justify-content: flex-end;
   float: right;
   margin: 10px;
+}
+
+.card {
+  min-width: 400px;
+}
+
+.action {
+  display: inline-block;
+  padding: 0 4px;
+  color: var(--color-text-1);
+  line-height: 24px;
+  background: transparent;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: all 0.1s ease;
+}
+
+.action:hover {
+  background: var(--color-fill-3);
 }
 </style>

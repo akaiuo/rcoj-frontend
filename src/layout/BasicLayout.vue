@@ -34,11 +34,15 @@ import GlobalHeader from "@/components/GlobalHeader.vue";
 #basicLayout .content {
   background: white;
   min-width: 600px;
+  padding-bottom: 32px;
 }
 
 #basicLayout .footer {
   background: #efefef;
   padding: 16px;
   text-align: center;
+  bottom: 0;
+  left: 0;
+  right: 0;
 }
 </style>

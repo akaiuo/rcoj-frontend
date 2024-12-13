@@ -13,6 +13,8 @@ import QuestionListView from "@/views/question/QuestionListView.vue";
 import QuestionView from "@/views/question/QuestionView.vue";
 import QuestionSubmitListView from "@/views/question/QuestionSubmitListView.vue";
 import QuestionSubmitInfoView from "@/views/question/QuestionSubmitInfoView.vue";
+import MySubmit from "@/components/userInfo/sublist/MySubmit.vue";
+import BlogPageView from "@/views/blog/BlogPageView.vue";
 
 export const routes: Array<RouteRecordRaw> = [
   {
@@ -58,7 +60,7 @@ export const routes: Array<RouteRecordRaw> = [
     component: AdminView,
     meta: {
       access: ACCESS_ENUM.ADMIN,
-      visibleHead: true,
+      visibleHead: false,
     },
   },
   {
@@ -66,7 +68,8 @@ export const routes: Array<RouteRecordRaw> = [
     name: "创建题目",
     component: AddQuestionView,
     meta: {
-      visibleHead: true,
+      access: ACCESS_ENUM.ADMIN,
+      visibleHead: false,
     },
   },
   {
@@ -74,6 +77,7 @@ export const routes: Array<RouteRecordRaw> = [
     name: "管理题目",
     component: manageQuestionView,
     meta: {
+      access: ACCESS_ENUM.ADMIN,
       visibleHead: true,
     },
   },
@@ -90,6 +94,12 @@ export const routes: Array<RouteRecordRaw> = [
       visibleHead: false,
       access: ACCESS_ENUM.ADMIN,
     },
+    children: [
+      {
+        path: "/user/info/mySubmit",
+        component: MySubmit
+      }
+    ]
   },
   {
     path: "/view/question/:id",
@@ -101,11 +111,11 @@ export const routes: Array<RouteRecordRaw> = [
   },
   {
     path: "/list/question/submit",
-    name: "我的提交",
+    name: "提交信息",
     component: QuestionSubmitListView,
     meta: {
       visibleHead: true,
-      access: ACCESS_ENUM.USER,
+      access: ACCESS_ENUM.NOT_LOGIN,
     },
   },
   {
@@ -118,4 +128,12 @@ export const routes: Array<RouteRecordRaw> = [
       access: ACCESS_ENUM.USER,
     },
   },
+  {
+    path: "/blog",
+    name: "blog",
+    component: BlogPageView,
+    meta: {
+      visibleHead: true,
+    }
+  }
 ];

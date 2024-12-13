@@ -22,10 +22,21 @@
         </a-menu-item>
       </a-menu>
     </a-col>
-    <a-col flex="100px">
-      <span id="username" @click="handleUsername">
-        {{ store.state.user?.loginUser?.userName ?? "未登录" }}
-      </span>
+    <a-col flex="150px">
+      <a-dropdown trigger="hover" v-if="store.state.user.loginUser.userName">
+        <span id="username" @click="null">
+          {{ store.state.user?.loginUser?.userName }}
+        </span>
+        <template #content>
+          <a-doption @click="handleUserCenter">我的主页</a-doption>
+          <a-doption @click="handleLogout">退出登录</a-doption>
+        </template>
+      </a-dropdown>
+      <div v-else>
+        <span class="login_logout" @click="handleLogin">登录</span>
+        <a-divider direction="vertical" />
+        <span class="login_logout">注册</span>
+      </div>
     </a-col>
   </a-row>
 </template>
@@ -36,7 +47,8 @@ import router from "@/router";
 import { computed, ref } from "vue";
 import { useStore } from "vuex";
 import checkAccess from "@/access/checkAccess";
-import { Message } from "@arco-design/web-vue";
+import { UserControllerService } from "../../generated";
+import { useRoute } from "vue-router";
 
 //默认主页
 const selectedKey = ref(["/"]);
@@ -52,6 +64,7 @@ const doMenuClick = (key: string) => {
   });
 };
 const store = useStore();
+const route = useRoute();
 
 // 过滤路由
 const visibleRoutes = computed(() => {
@@ -67,9 +80,24 @@ const visibleRoutes = computed(() => {
   });
 });
 
-const handleUsername = () => {
+const handleUserCenter = () => {
   router.push({
     path: "/user/info",
+  });
+};
+
+const handleLogout = () => {
+  UserControllerService.userLogoutUsingPost();
+  location.reload();
+};
+
+const handleLogin = () => {
+  console.log(route.path);
+  router.push({
+    path: "/user/login",
+    query: {
+      redirect: route.path,
+    },
   });
 };
 </script>
@@ -93,5 +121,16 @@ const handleUsername = () => {
 #username {
   font-size: 16px;
   cursor: pointer;
+}
+
+.login_logout {
+  font-size: 16px;
+  cursor: pointer;
+  padding: 5px 10px;
+}
+
+.login_logout:hover {
+  color: royalblue;
+  background: var(--color-fill-3);
 }
 </style>

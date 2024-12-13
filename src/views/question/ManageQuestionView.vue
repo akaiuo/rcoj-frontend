@@ -1,5 +1,21 @@
 <template>
   <div id="manageQuestionView">
+    <a-form :layout="'inline'">
+      <a-form-item field="title" label="题目">
+        <a-input v-model="search.title" />
+      </a-form-item>
+      <a-form-item field="createUser" label="创建用户">
+        <a-input v-model="search.user" />
+      </a-form-item>
+      <a-button @click="handleSearch" :type="'primary'">搜索</a-button>
+      <a-button
+        :type="'primary'"
+        id="createQuestion"
+        @click="handleCreateQuestion"
+        >创建题目
+      </a-button>
+    </a-form>
+    <a-divider size="0" />
     <a-table :columns="columns" :data="dataList" :pagination="false">
       <template #optional="{ record }">
         <a-space>
@@ -85,6 +101,16 @@ const req = ref({
   current: 1,
   pageSize: 10,
 });
+
+const search = ref({
+  title: "",
+  user: "",
+});
+
+const handleSearch = () => {
+  alert("search");
+};
+
 const loadData = async () => {
   const resp = await QuestionControllerService.listQuestionByPageUsingPost(
     req.value
@@ -98,8 +124,14 @@ const loadData = async () => {
 };
 
 const route = useRouter();
+
+const handleCreateQuestion = () => {
+  route.push({
+    path: "/add/question",
+  });
+};
+
 const editRow = (question: Question) => {
-  console.log("edit");
   route.push({
     path: "/edit/question",
     query: {
@@ -130,5 +162,11 @@ onMounted(() => {
 <style scoped>
 #manageQuestionView {
   padding: 32px 10%;
+}
+
+#createQuestion {
+  right: 0;
+  position: absolute;
+  margin-right: 10%;
 }
 </style>

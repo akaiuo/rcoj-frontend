@@ -1,6 +1,10 @@
 <template>
   <div id="app">
-    <template v-if="route.path.startsWith('/user')">
+    <template
+      v-if="
+        route.path.startsWith('/user') && !route.path.startsWith('/user/info')
+      "
+    >
       <router-view />
     </template>
     <template v-if="route.path.startsWith('/view/question')">
@@ -10,6 +14,13 @@
       <basic-layout />
     </template>
   </div>
+  <vue-live2d
+      :model="['Potion-Maker/Pio', 'school-2017-costume-yellow']"
+      :size="kanbanStyle.size"
+      :direction="kanbanStyle.direction"
+      :style="kanbanStyle.style"
+      v-if="false"
+  ></vue-live2d>
 </template>
 
 <style>
@@ -22,8 +33,16 @@ import BasicLayout from "@/layout/BasicLayout.vue";
 import { onMounted } from "vue";
 import { useRoute } from "vue-router";
 import QuestionLayout from "@/layout/QuestionLayout.vue";
-
 const route = useRoute();
+import {ref} from "vue";
+
+const kanbanStyle = ref({
+  direction: 'right',
+  style: 'position: fixed; bottom: 0; right: 0;',
+  width: 500,
+  height: 500,
+  size: 350,
+})
 
 /**
  * 全局初始化函数，全局单次调用的代码写到这里
@@ -56,5 +75,9 @@ const doInit = () => {
 
 onMounted(() => {
   doInit();
+  console.log('finish loading');
 });
+
+
+
 </script>
