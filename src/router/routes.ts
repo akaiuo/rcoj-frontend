@@ -14,7 +14,10 @@ import QuestionView from "@/views/question/QuestionView.vue";
 import QuestionSubmitListView from "@/views/question/QuestionSubmitListView.vue";
 import QuestionSubmitInfoView from "@/views/question/QuestionSubmitInfoView.vue";
 import MySubmit from "@/components/userInfo/sublist/MySubmit.vue";
-import BlogPageView from "@/views/blog/BlogPageView.vue";
+import BlogPageView from "@/views/post/PostPageView.vue";
+import PostPageView from "@/views/post/PostPageView.vue";
+import PostEditView from "@/views/post/PostEditView.vue";
+import PostListView from "@/views/post/PostListView.vue";
 
 export const routes: Array<RouteRecordRaw> = [
   {
@@ -36,11 +39,15 @@ export const routes: Array<RouteRecordRaw> = [
   },
   {
     path: "/",
+    redirect: "/home",
+  },
+  {
+    path: "/home",
     name: "主页",
-    component: ExampleView,
+    component: PostListView,
     meta: {
       visibleHead: true,
-    },
+    }
   },
   {
     path: "/list/question",
@@ -129,11 +136,14 @@ export const routes: Array<RouteRecordRaw> = [
     },
   },
   {
-    path: "/blog",
-    name: "blog",
-    component: BlogPageView,
-    meta: {
-      visibleHead: true,
-    }
-  }
+    path: "/post/view/:id",
+    name: "postView",
+    props: true,
+    component: PostPageView,
+  },
+  {
+    path: "/post/edit",
+    name: "postEdit",
+    component: PostEditView,
+  },
 ];

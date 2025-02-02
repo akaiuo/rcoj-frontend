@@ -236,13 +236,26 @@ onMounted(() => {
 </script>
 
 <style scoped>
+
 #QuestionSubmitListView {
-  padding: 32px 10%;
+  min-width: 920px;
 }
 
 #mySubmit {
-  right: 0;
-  position: absolute;
-  margin-right: 10%;
+  margin-left: auto;
+}
+
+@media screen {
+  #QuestionSubmitListView {
+    margin: 32px 16px;
+    width: calc(100% - 32px);
+  }
+}
+
+@media screen and (min-width: 1632px) {
+  #QuestionSubmitListView {
+    margin: 32px auto;
+    width: 1600px;
+  }
 }
 </style>

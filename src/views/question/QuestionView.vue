@@ -271,10 +271,6 @@ a-col {
   border: black 1px solid;
 }
 
-.icon:hover {
-  cursor: pointer;
-}
-
 .footer {
   box-shadow: #eee 5px 5px 15px;
   height: 50px;

@@ -1,5 +1,5 @@
 <template>
-  <div id="questionComment">
+  <div id="postComment">
     <div id="editComment">
       <a-form :layout="'inline'">
         <a-form-item>
@@ -8,19 +8,19 @@
         </a-form-item>
         <a-form-item>
           <a-button
-            :type="'primary'"
-            id="handleSubmitComment"
-            @click="addComment"
-            >发布评论
+              :type="'primary'"
+              id="handleSubmitComment"
+              @click="addComment"
+          >发布评论
           </a-button>
         </a-form-item>
       </a-form>
       <MdEditor
-        v-model:value="myComment"
-        :handle-change="editCommentHandleChange"
+          v-model:value="myComment"
+          :handle-change="editCommentHandleChange"
       />
     </div>
-    <a-divider size="1"/>
+    <a-divider size="0"/>
     <a-space>
       <span>排序</span>
       <a-select v-model="commentSort">
@@ -47,17 +47,17 @@
           </span>
           <span class="action" key="reply"> <IconMessage /> 回复 </span>
           <span
-            v-show="val.author === store.state.user.loginUser.userName"
-            class="action"
-            @click="onDeleteChange(idx as number)"
-            ><IconDelete />删除</span
+              v-show="val.author === store.state.user.loginUser.userName"
+              class="action"
+              @click="onDeleteChange(idx as number)"
+          ><IconDelete />删除</span
           >
         </template>
         <template #avatar>
           <a-avatar>
             <img
-              alt="avatar"
-              src="https://p1-arco.byteimg.com/tos-cn-i-uwbnlip3yd/3ee5f13fb09879ecb5185e440cef6eb9.png~tplv-uwbnlip3yd-webp.webp"
+                alt="avatar"
+                src="https://p1-arco.byteimg.com/tos-cn-i-uwbnlip3yd/3ee5f13fb09879ecb5185e440cef6eb9.png~tplv-uwbnlip3yd-webp.webp"
             />
           </a-avatar>
         </template>
@@ -72,18 +72,18 @@
 import { defineProps, onMounted, ref, withDefaults } from "vue";
 import MdViewer from "@/components/MdViewer.vue";
 import MdEditor from "@/components/MdEditor.vue";
-import { QuestionControllerService } from "../../generated/question";
 import { Message } from "@arco-design/web-vue";
 import { useStore } from "vuex";
+import {PostControllerService} from "../../generated/post";
 
 const store = useStore();
 
 interface Props {
-  questionId: string;
+  postId: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  questionId: () => "",
+  postId: () => "",
 });
 
 const myComment = ref("");
@@ -98,20 +98,20 @@ const commentSort = ref("最新");
 
 const onLikeChange = (idx: number) => {
   if (comments.value[idx].isLike) {
-    QuestionControllerService.cancelThumbCommentUsingPut(
-      comments.value[idx].commentId
+    PostControllerService.cancelThumbCommentUsingPut(
+        comments.value[idx].commentId
     );
   } else {
-    QuestionControllerService.thumbCommentUsingPut(
-      comments.value[idx].commentId
+    PostControllerService.thumbCommentUsingPut(
+        comments.value[idx].commentId
     );
   }
   comments.value[idx].isLike = !comments.value[idx].isLike;
 };
 
 const onDeleteChange = async (idx: number) => {
-  const resp = await QuestionControllerService.deleteCommentUsingDelete(
-    comments.value[idx].commentId
+  const resp = await PostControllerService.deleteCommentUsingDelete(
+      comments.value[idx].commentId
   );
   if (resp.code !== 0) {
     Message.error(resp.message);
@@ -124,16 +124,16 @@ const onDeleteChange = async (idx: number) => {
 const req = ref({
   current: 1,
   pageSize: 10,
-  questionId: props.questionId,
+  postId: props.postId,
   sortField: "createTime",
   sortOrder: "descend",
 });
 
 const loadData = async () => {
   const resp =
-    await QuestionControllerService.postCommentsByQuestionIdUsingPost(
-      req.value
-    );
+      await PostControllerService.postCommentsByPostIdUsingPost(
+          req.value
+      );
   if (resp.code != 0) {
     Message.error(resp.message);
     return;
@@ -158,8 +158,8 @@ const addComment = async () => {
     Message.warning("评论不能为空");
     return;
   }
-  const resp = await QuestionControllerService.addCommentUsingPost({
-    questionId: props.questionId,
+  const resp = await PostControllerService.addCommentUsingPost({
+    postId: props.postId,
     content: myComment.value,
   });
   if (resp.code != 0) {
@@ -177,7 +177,7 @@ onMounted(() => {
 </script>
 
 <style scoped>
-#questionComment {
+#postComment {
 }
 
 .action {

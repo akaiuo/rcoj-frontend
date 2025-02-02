@@ -112,7 +112,9 @@ router.afterEach((to, from, failure) => {
 
 .box {
   border-radius: 15px;
-  //padding: 200px; font-size: 24px; box-shadow: rgba(0, 0, 0, 0.15) 0 15px 25px, rgba(0, 0, 0, 0.05) 5px 5px 10px;
+  //padding: 200px;
+  //font-size: 24px;
+  box-shadow: rgba(0, 0, 0, 0.15) 0 15px 25px, rgba(0, 0, 0, 0.05) 5px 5px 10px;
 }
 
 .grayCircle {

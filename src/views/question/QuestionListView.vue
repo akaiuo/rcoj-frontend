@@ -76,7 +76,7 @@ const columns = [
   {
     title: "标签",
     slotName: "tags",
-    width: 200,
+    width: 160,
   },
   {
     title: "通过率(通过/提交)",
@@ -143,6 +143,20 @@ const handleSearch = () => {
 }
 
 #manageQuestionView {
-  padding: 32px 10%;
+  min-width: 300px;
+}
+
+@media screen {
+  #manageQuestionView {
+    margin: 32px 16px;
+    width: calc(100% - 32px);
+  }
+}
+
+@media screen and (min-width: 1432px) {
+  #manageQuestionView {
+    margin: 32px auto;
+    width: 1400px;
+  }
 }
 </style>

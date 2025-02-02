@@ -7,6 +7,7 @@ export default {
   state: () => ({
     loginUser: {
       userName: undefined,
+      id: undefined,
     },
   }),
   actions: {

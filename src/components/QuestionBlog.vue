@@ -30,7 +30,7 @@
         </a-list-item>
       </template>
       <template #scroll-loading>
-        <div v-if="bottom">--所有题解已加载完成--</div>
+        <div v-if="isBottom">--所有题解已加载完成--</div>
         <a-spin v-else />
       </template>
     </a-list>
@@ -78,7 +78,7 @@ const blogs = ref([{
   }
 ])
 
-const bottom = ref(true)
+const isBottom = ref(true)
 </script>
 
 <style scoped>
@@ -103,5 +103,6 @@ const bottom = ref(true)
 }
 
 #questionBolg {
+
 }
 </style>

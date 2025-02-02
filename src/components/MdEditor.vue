@@ -11,22 +11,24 @@ interface Props {
   handleChange: (val: string) => void;
 }
 
+// 设置默认值
+const props = withDefaults(defineProps<Props>(), {
+  value: "",
+  handleChange: (val: string) => null
+});
+
 const plugins = [
   gfm(),
   highlight(),
   math(),
   // Add more plugins here
 ];
-
-// 设置默认值
-const props = withDefaults(defineProps<Props>(), {
-  value: "",
-  handleChange: (val: string) => null,
-});
 </script>
 
 <template>
-  <Editor :value="value" :plugins="plugins" @change="handleChange" />
+  <Editor :value="value" :plugins="plugins" @change="handleChange"/>
 </template>
 
-<style scoped></style>
+<style scoped>
+
+</style>

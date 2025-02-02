@@ -161,12 +161,24 @@ onMounted(() => {
 
 <style scoped>
 #manageQuestionView {
-  padding: 32px 10%;
+  min-width: 800px;
 }
 
 #createQuestion {
-  right: 0;
-  position: absolute;
-  margin-right: 10%;
+  margin-left: auto;
+}
+
+@media screen {
+  #manageQuestionView {
+    margin: 32px 16px;
+    width: calc(100% - 32px);
+  }
+}
+
+@media screen and (min-width: 1632px) {
+  #manageQuestionView {
+    margin: 32px auto;
+    width: 1600px;
+  }
 }
 </style>
