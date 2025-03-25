@@ -16,8 +16,8 @@
         <template #item="{ item }">
           <a-list-item class="list-demo-item" action-layout="vertical" @click="toPost(item.postId)">
             <template #actions>
-              <span><icon-heart />{{item.thumbNum}}</span>
-              <span><icon-star />{{item.favourNum}}</span>
+              <span><icon-heart />{{item.favourNum}}</span>
+              <span><icon-star />{{item.starNum}}</span>
             </template>
             <a-list-item-meta>
               <template #avatar>
@@ -38,8 +38,58 @@
       </a-list>
     </div>
     <div class="box b">
-      bb
+      <div style="height: 260px; padding: 16px;" class="boxB">
+        <span>帖子过滤器</span><a-button :status="'normal'" :size="'small'" @click="addPostHandle" style="margin-left: 16px"><icon-plus/>创建帖子</a-button>
+        <a-form :label-align="'left'" auto-label-width style="margin-top: 16px;" :size="'small'">
+          <a-form-item label="标题">
+            <a-input v-model="req.title"></a-input>
+          </a-form-item>
+          <a-form-item field="tags" label="标签">
+            <a-input-tag
+                style="width: 200px"
+                allow-clear
+                v-model="req.tags"
+            />
+          </a-form-item>
+          <a-form-item label="发布时间">
+            <a-date-picker
+                style="width: 200px"
+                show-time
+                format="YYYY-MM-DD HH:mm:ss"
+                placeholder="该时间点之后"
+                v-model="req.createAfter"
+            />
+          </a-form-item>
+          <a-form-item>
+            <a-date-picker
+                style="width: 200px;"
+                show-time
+                format="YYYY-MM-DD hh:mm:ss"
+                placeholder="该时间点之前"
+                v-model="req.createBefore"
+            />
+          </a-form-item>
+          <a-form-item>
+            <a-button :type="'primary'" @click="handleSearch">筛选</a-button>
+          </a-form-item>
+        </a-form>
+      </div>
+      <div style="height: 486px; margin-top: 20px" class="boxB">
+        <div style="height: 100px; padding: 16px;">
+          <span>一言</span>
+          <a-typography-title :heading="4">
+            H2. The Pragmatic Romanticism
+          </a-typography-title>
+        </div>
+        <div id="calendar">
+          <a-date-picker
+              hide-trigger
+              style="width: 350px;"
+          />
+        </div>
+      </div>
     </div>
+    <a-back-top :style="{position:'fixed'}" />
   </div>
 </template>
 
@@ -55,7 +105,12 @@ const data = ref();
 const req = ref({
   pageSize: 15,
   current: 1,
+  title: "",
+  tags: [],
+  createAfter: "",
+  createBefore: "",
 })
+
 const isBottom = ref(false)
 
 const loadData = async () => {
@@ -70,8 +125,8 @@ const loadData = async () => {
         description: record.preview,
         crateTime: record.createTime,
         tags: record.tags,
-        thumbNum: record.thumbNum,
         favourNum: record.favourNum,
+        starNum: record.starNum,
         userId: record.userVO.userId,
         username: record.userVO.userName,
         userRole: record.userVO.userRole,
@@ -85,6 +140,15 @@ const loadData = async () => {
     }
   }
 }
+
+const handleSearch = () => {
+  // alert(JSON.stringify(req.value));
+  posts.value = [];
+  req.value.current = 1;
+  isBottom.value = false;
+  loadData();
+}
+
 
 const handleWindow = () => {
   const boxB = document.getElementsByClassName("box b");
@@ -126,6 +190,12 @@ const toPost = (postId: number) => {
   window.open(href, '_blank');
 };
 
+const addPostHandle = () => {
+  route.push({
+    path: "post/edit"
+  })
+}
+
 const toUser = (userId: number) => {
   //TODO 跳转到用户主页
 }
@@ -159,6 +229,7 @@ onUnmounted(() => {
 
 .a {
   grid-column: col1-start / col2-start;
+  box-shadow: rgba(0, 0, 0, 0.15) 0 15px 25px, rgba(0, 0, 0, 0.05) 5px 5px 10px;
 }
 
 .b {
@@ -166,13 +237,12 @@ onUnmounted(() => {
   grid-row: row1-start / row2-start;
   position: fixed;
   width: 350px;
-  height: 300px;
-  background-color: #cccccc;
   left: calc((100vw - 1366px) / 2 + 1016px);
 }
 
-.box {
-  border-radius: 10px;
+.boxB {
+  border-radius: 5px;
+  background-color: rgb(81, 196, 199);
   box-shadow: rgba(0, 0, 0, 0.15) 0 15px 25px, rgba(0, 0, 0, 0.05) 5px 5px 10px;
 }
 

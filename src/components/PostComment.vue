@@ -8,63 +8,76 @@
         </a-form-item>
         <a-form-item>
           <a-button
-              :type="'primary'"
-              id="handleSubmitComment"
-              @click="addComment"
-          >发布评论
+            :type="'primary'"
+            id="handleSubmitComment"
+            @click="addComment"
+            >发布评论
           </a-button>
         </a-form-item>
       </a-form>
       <MdEditor
-          v-model:value="myComment"
-          :handle-change="editCommentHandleChange"
+        v-model:value="myComment"
+        :handle-change="editCommentHandleChange"
       />
     </div>
-    <a-divider size="0"/>
-    <a-space>
-      <span>排序</span>
-      <a-select v-model="commentSort">
-        <a-option>最新</a-option>
-        <a-option>最早</a-option>
-        <a-option>热门</a-option>
-      </a-select>
-    </a-space>
     <a-divider size="0" />
-    <div v-for="(val, idx) in comments" :key="val.commentId">
-      <a-comment :author="val.author" :datetime="val.dateTime">
-        <template #content>
-          <MdViewer :value="val.content" />
-        </template>
-        <template #actions>
-          <span class="action" key="heart" @click="onLikeChange(idx as number)">
-            <span v-if="val.isLike">
-              <IconHeartFill :style="{ color: '#f53f3f' }" />
+    <div id="viewComment">
+      <a-space>
+        <span>排序</span>
+        <a-select v-model="commentSort">
+          <a-option>最新</a-option>
+          <a-option>最早</a-option>
+          <a-option>热门</a-option>
+        </a-select>
+      </a-space>
+      <a-divider size="0" />
+      <div v-for="(val, idx) in comments" :key="val.commentId">
+        <a-comment :author="val.author" :datetime="val.dateTime">
+          <template #content>
+            <MdViewer :value="val.content" />
+          </template>
+          <template #actions>
+            <span
+              class="action"
+              key="heart"
+              @click="onLikeChange(idx as number)"
+            >
+              <span v-if="val.isLike">
+                <IconHeartFill :style="{ color: '#f53f3f' }" />
+              </span>
+              <span v-else>
+                <IconHeart />
+              </span>
+              {{ val.likeNum + (val.isLike ? 1 : 0) }}
             </span>
-            <span v-else>
-              <IconHeart />
-            </span>
-            {{ val.likeNum + (val.isLike ? 1 : 0) }}
-          </span>
-          <span class="action" key="reply"> <IconMessage /> 回复 </span>
-          <span
+            <span class="action" key="reply"> <IconMessage /> 回复 </span>
+            <span
               v-show="val.author === store.state.user.loginUser.userName"
               class="action"
               @click="onDeleteChange(idx as number)"
-          ><IconDelete />删除</span
-          >
-        </template>
-        <template #avatar>
-          <a-avatar>
-            <img
+              ><IconDelete />删除</span
+            >
+          </template>
+          <template #avatar>
+            <a-avatar>
+              <img
                 alt="avatar"
                 src="https://p1-arco.byteimg.com/tos-cn-i-uwbnlip3yd/3ee5f13fb09879ecb5185e440cef6eb9.png~tplv-uwbnlip3yd-webp.webp"
-            />
-          </a-avatar>
-        </template>
-      </a-comment>
-      <a-divider :type="'solid'" :margin="15" :size="0" />
+              />
+            </a-avatar>
+          </template>
+        </a-comment>
+        <a-divider :type="'solid'" :margin="15" :size="0" />
+      </div>
+      <a-pagination
+        :total="page.total"
+        show-total
+        v-model:page-size="req.pageSize"
+        v-model:current="req.current"
+        @update:current="loadData"
+        @update:page-size="loadData"
+      />
     </div>
-    <a-pagination :total="100" :page-size="10" />
   </div>
 </template>
 
@@ -74,7 +87,7 @@ import MdViewer from "@/components/MdViewer.vue";
 import MdEditor from "@/components/MdEditor.vue";
 import { Message } from "@arco-design/web-vue";
 import { useStore } from "vuex";
-import {PostControllerService} from "../../generated/post";
+import { PostControllerService } from "../../generated/post";
 
 const store = useStore();
 
@@ -97,21 +110,23 @@ const editCommentHandleChange = (val: string) => {
 const commentSort = ref("最新");
 
 const onLikeChange = (idx: number) => {
+  if (store.state.user.loginUser.userName == undefined) {
+    Message.error("未登录");
+    return;
+  }
   if (comments.value[idx].isLike) {
     PostControllerService.cancelThumbCommentUsingPut(
-        comments.value[idx].commentId
+      comments.value[idx].commentId
     );
   } else {
-    PostControllerService.thumbCommentUsingPut(
-        comments.value[idx].commentId
-    );
+    PostControllerService.thumbCommentUsingPut(comments.value[idx].commentId);
   }
   comments.value[idx].isLike = !comments.value[idx].isLike;
 };
 
 const onDeleteChange = async (idx: number) => {
   const resp = await PostControllerService.deleteCommentUsingDelete(
-      comments.value[idx].commentId
+    comments.value[idx].commentId
   );
   if (resp.code !== 0) {
     Message.error(resp.message);
@@ -129,18 +144,23 @@ const req = ref({
   sortOrder: "descend",
 });
 
+const page = ref({
+  total: 0,
+  current: 0,
+});
+
 const loadData = async () => {
-  const resp =
-      await PostControllerService.postCommentsByPostIdUsingPost(
-          req.value
-      );
+  const resp = await PostControllerService.postCommentsByPostIdUsingPost(
+    req.value
+  );
   if (resp.code != 0) {
     Message.error(resp.message);
     return;
   }
+  page.value.total = resp.data.total;
+  page.value.current = resp.data.current;
   comments.value = [];
   for (const record of resp.data.records) {
-    console.log(record);
     comments.value.push({
       commentId: record.id,
       author: record.userVO.userName,
@@ -196,6 +216,5 @@ onMounted(() => {
 }
 
 #handleSubmitComment {
-
 }
 </style>

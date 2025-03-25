@@ -115,7 +115,7 @@
         <a-space>
           <div>
             <a-popover title="编辑器设置" trigger="click" :position="'top'">
-              <icon-settings :size="24" class="icon" />
+              <icon-settings :size="24" class="action" />
               <template #content>
                 <a-space :direction="'vertical'">
                   <div>

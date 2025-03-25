@@ -7,9 +7,9 @@
       <a-layout-content class="content">
         <router-view />
       </a-layout-content>
-      <a-layout-footer class="footer">
-        ©<a href="http://8.222.157.217" target="_blank">powered by whoj</a>
-      </a-layout-footer>
+<!--      <a-layout-footer class="footer">-->
+<!--        ©<a href="http://8.222.157.217" target="_blank">powered by whoj</a>-->
+<!--      </a-layout-footer>-->
     </a-layout>
   </div>
 </template>

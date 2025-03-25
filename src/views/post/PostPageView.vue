@@ -41,28 +41,30 @@
           </div>
           <div id="right" style="float: right; margin: 8px 16px">
             <a-space size="medium">
-              <div class="action" @click="handleThumb">
-                <icon-thumb-up :size="22" v-show="!isThumb" class="icon" />
-                <icon-thumb-up-fill
+              <div class="action" @click="handleFavour">
+                <icon-heart :size="22" v-show="!post.isFavour" class="icon" />
+                <icon-heart-fill
                   :size="22"
-                  style="color: steelblue"
-                  v-show="isThumb"
+                  style="color: orangered"
+                  v-show="post.isFavour"
                   class="icon"
                 />
-                <span> {{ question?.thumbNum ?? "-1" }} </span>
+                <span> {{ post.favourNum + (post.isFavour ? 1 : 0) }} </span>
               </div>
-              <div class="action" @click="handleFavor">
-                <icon-star :size="22" v-show="!isFavor" />
+              <div class="action" @click="handleStar">
+                <icon-star :size="22" v-show="!post.isStar" />
                 <icon-star-fill
                   :size="22"
                   style="color: darkorange"
-                  v-show="isFavor"
+                  v-show="post.isStar"
                 />
-                <span> {{ question?.favourNum ?? "-1" }} </span>
+                <span> {{ post.starNum + (post.isStar ? 1 : 0) }} </span>
               </div>
               <div class="action">
-                <icon-message :size="22" />
-                <span> {{ question?.favourNum ?? "-1" }} </span>
+                <a href="#comment" style="color: inherit; text-decoration: none">
+                  <icon-message :size="22" />
+                  <span> {{ post?.commentNum ?? "-1" }} </span>
+                </a>
               </div>
             </a-space>
           </div>
@@ -83,45 +85,44 @@
           </div>
           <div id="right" style="float: right; margin: 8px 16px">
             <a-space size="medium">
-              <div class="action" @click="handleThumb">
-                <icon-thumb-up :size="22" v-show="!isThumb" class="icon" />
-                <icon-thumb-up-fill
+              <div class="action" @click="handleFavour">
+                <icon-heart :size="22" v-show="!post.isFavour" class="icon" />
+                <icon-heart-fill
                   :size="22"
-                  style="color: steelblue"
-                  v-show="isThumb"
+                  style="color: orangered"
+                  v-show="post.isFavour"
                   class="icon"
                 />
-                <span> {{ question?.thumbNum ?? "-1" }} </span>
+                <span> {{ post.favourNum + (post.isFavour ? 1 : 0) }} </span>
               </div>
-              <div class="action" @click="handleFavor">
-                <icon-star :size="22" v-show="!isFavor" />
+              <div class="action" @click="handleStar">
+                <icon-star :size="22" v-show="!post.isStar" />
                 <icon-star-fill
                   :size="22"
                   style="color: darkorange"
-                  v-show="isFavor"
+                  v-show="post.isStar"
                 />
-                <span> {{ question?.favourNum ?? "-1" }} </span>
+                <span> {{ post.starNum + (post.isStar ? 1 : 0) }} </span>
               </div>
               <div class="action">
-                <icon-message :size="22" />
-                <span> {{ question?.favourNum ?? "-1" }} </span>
+                <a href="#comment" style="color: inherit; text-decoration: none">
+                  <icon-message :size="22" />
+                  <span> {{ post?.commentNum ?? "-1" }} </span>
+                </a>
               </div>
             </a-space>
           </div>
         </div>
       </div>
     </div>
-    <a-divider size="1" />
+    <a-divider size="1" id="comment"/>
     <PostComment :postId="props.id"/>
-    {{props.id}}
-    {{store.state.user.loginUser.id}}
   </div>
 </template>
 
 <script setup lang="ts">
 import WangViewer from "@/components/WangViewer.vue";
 import {defineProps, onMounted, onUnmounted, ref, withDefaults} from "vue";
-import QuestionComment from "@/components/QuestionComment.vue";
 import {PostControllerService} from "../../../generated/post";
 import {Message} from "@arco-design/web-vue";
 import MdViewer from "@/components/MdViewer.vue";
@@ -147,6 +148,11 @@ const post = ref({
   updateTime: "2025-01-05T15:24:28+08:00",
   createTime: "2025-01-05T15:24:28+08:00",
   editorType: 1,
+  favourNum: -1,
+  starNum: -1,
+  commentNum: -1,
+  isFavour: false,
+  isStar: false,
 });
 const author = ref({
   avatar:
@@ -154,28 +160,6 @@ const author = ref({
   username: "abcd",
   id: "34151235",
 });
-
-const handleWindow = () => {
-  const panel = document.getElementById("panel");
-  const panelRoot = document.getElementById("panelRoot");
-  const post = document.getElementById("post");
-
-  console.log(window.scrollY, window.innerHeight, post?.offsetHeight);
-  if (window.scrollY + window.innerHeight >= post?.offsetHeight) {
-    panel.style.display = "none";
-  } else {
-    panel.style.display = "";
-  }
-};
-
-// 定义一个函数，用于回到页面顶部
-const scrollToTop = () => {
-  window.scrollTo({
-    top: 0,
-    left: 0,
-    behavior: "smooth", // 可选，平滑滚动效果
-  });
-};
 
 const loadData = async () => {
   const resp = await PostControllerService.getPostUsingGet(props.id as any);
@@ -192,6 +176,11 @@ const loadData = async () => {
     post.value.createTime = data.createTime ?? "";
     post.value.updateTime = data.updateTime ?? "";
     post.value.editorType = data.editorType ?? 1;
+    post.value.favourNum = data.favourNum - (data.hasFavour ? 1 : 0);
+    post.value.starNum = data.starNum - (data.hasStar ? 1 : 0);
+    post.value.commentNum = data.commentNum ?? 1;
+    post.value.isFavour = data.hasFavour;
+    post.value.isStar = data.hasStar;
 
     author.value.username = data.userVO?.userName ?? "";
     author.value.avatar = data.userVO?.userAvatar ?? "";
@@ -203,6 +192,62 @@ const loadData = async () => {
     }
   }
 }
+
+const handleFavour = () => {
+  if (store.state.user.loginUser.userName == undefined) {
+    Message.error("未登录");
+    return;
+  }
+  if (post.value.isFavour) {
+    PostControllerService.cancelFavourPostUsingPut(
+        props.id as any
+    );
+  } else {
+    PostControllerService.favourPostUsingPut(
+        props.id as any
+    );
+  }
+  post.value.isFavour = !post.value.isFavour;
+}
+
+const handleStar = () => {
+  if (store.state.user.loginUser.userName == undefined) {
+    Message.error("未登录");
+    return;
+  }
+  if (post.value.isStar) {
+    PostControllerService.cancelStarPostUsingPut(
+        props.id as any
+    );
+  } else {
+    PostControllerService.starPostUsingPut(
+        props.id as any
+    );
+  }
+  post.value.isStar = !post.value.isStar;
+}
+
+const handleWindow = () => {
+  const panel = document.getElementById("panel");
+  const panelRoot = document.getElementById("panelRoot");
+  const post = document.getElementById("post");
+
+  console.log(window.scrollY, window.innerHeight, post?.offsetHeight);
+  if (window.scrollY + window.innerHeight >= post?.offsetHeight) {
+    panel.style.display = "none";
+  } else {
+    panel.style.display = "flex";
+  }
+};
+
+// 定义一个函数，用于回到页面顶部
+const scrollToTop = () => {
+  window.scrollTo({
+    top: 0,
+    left: 0,
+    behavior: "smooth", // 可选，平滑滚动效果
+  });
+};
 
 onMounted(() => {
   window.addEventListener("scroll", handleWindow);
@@ -233,7 +278,7 @@ onUnmounted(() => {
   bottom: 0;
   height: 54px;
   vertical-align: center;
-  display: flex;
+  display: none;
   letter-spacing: 1px;
 
   padding: 0 2px;

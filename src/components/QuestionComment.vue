@@ -97,6 +97,10 @@ const editCommentHandleChange = (val: string) => {
 const commentSort = ref("最新");
 
 const onLikeChange = (idx: number) => {
+  if (store.state.user.loginUser.userName == undefined) {
+    Message.error("未登录");
+    return;
+  }
   if (comments.value[idx].isLike) {
     QuestionControllerService.cancelThumbCommentUsingPut(
       comments.value[idx].commentId

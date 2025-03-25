@@ -99,7 +99,6 @@ export const routes: Array<RouteRecordRaw> = [
     component: UserInfoView,
     meta: {
       visibleHead: false,
-      access: ACCESS_ENUM.ADMIN,
     },
     children: [
       {

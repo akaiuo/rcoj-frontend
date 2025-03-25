@@ -35,7 +35,7 @@
       <div v-else>
         <span class="login_logout" @click="handleLogin">登录</span>
         <a-divider direction="vertical" />
-        <span class="login_logout">注册</span>
+        <span class="login_logout" @click="handleRegister">注册</span>
       </div>
     </a-col>
   </a-row>
@@ -92,7 +92,6 @@ const handleLogout = () => {
 };
 
 const handleLogin = () => {
-  console.log(route.path);
   router.push({
     path: "/user/login",
     query: {
@@ -100,6 +99,15 @@ const handleLogin = () => {
     },
   });
 };
+
+const handleRegister = () => {
+  router.push({
+    path: "/user/register",
+    query: {
+      redirect: route.path,
+    },
+  });
+}
 </script>
 
 <style scoped>

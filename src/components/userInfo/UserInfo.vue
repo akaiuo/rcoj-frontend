@@ -19,7 +19,7 @@
         java大王
       </a-descriptions-item>
       <a-descriptions-item label="邮箱">
-        javaking@gmall.com
+        javaking@gmail.com
       </a-descriptions-item>
     </a-descriptions>
     </div>
