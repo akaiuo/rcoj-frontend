@@ -32,9 +32,9 @@ import GlobalHeader from "@/components/GlobalHeader.vue";
 }
 
 #basicLayout .content {
-  background: white;
   min-width: 600px;
   padding-bottom: 32px;
+  background-color: white;
 }
 
 #basicLayout .footer {

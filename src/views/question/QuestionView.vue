@@ -153,6 +153,9 @@
             </a-popover>
           </div>
           <div>
+            <icon-info-circle class="action" @click="handleClickInfo" :size="24"/>
+          </div>
+          <div>
             <span style="margin-left: 6px">语言：</span>
             <a-select :style="{ width: '120px' }" v-model="req.lang">
               <a-option>java</a-option>
@@ -173,6 +176,21 @@
       </div>
     </div>
   </div>
+  <a-modal v-model:visible="infoVisible" :hide-cancel=true>
+    <template #title>
+      编译器版本
+    </template>
+    <div>
+      java: 17-jdk-alpine<br/>
+      <code style="background-color: #cccccc">javac -encoding UTF8 $src</code><br/>
+      * 务必使用Main类作为主函数入口 <br/><br/>
+      python: 3.11.14-alpine3.23<br/>
+      <code style="background-color: #cccccc">python3 $src</code><br/><br/>
+      c++: GCC 11.2.0<br/>
+      <code style="background-color: #cccccc">g++ -DONLINE_JUDGE -fno-tree-ch -O2 -Wall -std=gnu++20 -pipe $src -lm -o $exe</code><br/><br/>
+      * 除c/c++外，其他语言两倍时间限制
+    </div>
+  </a-modal>
 </template>
 
 <script setup lang="ts">
@@ -183,6 +201,7 @@ import MdViewer from "@/components/MdViewer.vue";
 import CodeEditor from "@/components/codeEditor.vue";
 import QuestionComment from "@/components/QuestionComment.vue";
 import QuestionBlog from "@/components/QuestionBlog.vue";
+import {Modal} from "@arco-design/web-vue";
 
 interface Props {
   id: string;
@@ -197,6 +216,8 @@ const editorSettings = ref({
   tabSize: 4,
   theme: "vs",
 });
+
+const infoVisible = ref(false);
 
 const question = ref();
 const loadData = async () => {
@@ -255,6 +276,10 @@ const handleFavor = () => {
   isFavor.value = !isFavor.value;
   if (isFavor.value) question.value.favourNum += 1;
   else question.value.favourNum -= 1;
+};
+
+const handleClickInfo = () => {
+  infoVisible.value = true;
 };
 
 onMounted(() => {

@@ -39,7 +39,10 @@
     </div>
     <div class="box b">
       <div style="height: 260px; padding: 16px;" class="boxB">
-        <span>帖子过滤器</span><a-button :status="'normal'" :size="'small'" @click="addPostHandle" style="margin-left: 16px"><icon-plus/>创建帖子</a-button>
+        <span>帖子过滤器</span>
+        <a-button :status="'normal'" :size="'small'" @click="addPostHandle" style="margin-left: 16px" type="primary">
+          <icon-plus/>创建帖子
+        </a-button>
         <a-form :label-align="'left'" auto-label-width style="margin-top: 16px;" :size="'small'">
           <a-form-item label="标题">
             <a-input v-model="req.title"></a-input>
@@ -55,9 +58,10 @@
             <a-date-picker
                 style="width: 200px"
                 show-time
-                format="YYYY-MM-DD HH:mm:ss"
+                format="YYYY-MM-DD hh:mm:ss"
                 placeholder="该时间点之后"
                 v-model="req.createAfter"
+                value-format="YYYY-MM-DDThh:mm:ss"
             />
           </a-form-item>
           <a-form-item>
@@ -67,6 +71,7 @@
                 format="YYYY-MM-DD hh:mm:ss"
                 placeholder="该时间点之前"
                 v-model="req.createBefore"
+                value-format="YYYY-MM-DDThh:mm:ss"
             />
           </a-form-item>
           <a-form-item>
@@ -77,9 +82,8 @@
       <div style="height: 486px; margin-top: 20px" class="boxB">
         <div style="height: 100px; padding: 16px;">
           <span>一言</span>
-          <a-typography-title :heading="4">
-            H2. The Pragmatic Romanticism
-          </a-typography-title>
+          <br/>
+          <span style="font-size: 20px; display: block; padding-top: 10px">{{hitokoto}}</span>
         </div>
         <div id="calendar">
           <a-date-picker
@@ -98,6 +102,9 @@ import {onMounted, onUnmounted, ref} from "vue";
 import {PostControllerService} from "../../../generated/post";
 import {Message} from "@arco-design/web-vue";
 import {useRouter} from "vue-router";
+import axios from "axios";
+import {languages} from "monaco-editor";
+import json = languages.json;
 
 const posts = ref([])
 
@@ -110,6 +117,8 @@ const req = ref({
   createAfter: "",
   createBefore: "",
 })
+
+const hitokoto = ref("");
 
 const isBottom = ref(false)
 
@@ -200,9 +209,26 @@ const toUser = (userId: number) => {
   //TODO 跳转到用户主页
 }
 
+const loadHitokoto = async () => {
+  await axios.get('/hitokoto')
+      .then(function (resp) {
+        // 成功处理
+        console.log(resp.data.hitokoto);
+        hitokoto.value = resp.data.hitokoto;
+      })
+      .catch(function (error) {
+        // 错误处理
+        console.log(error);
+      })
+      .finally(function () {
+        // 总是执行
+      });
+}
+
 onMounted(() => {
   window.addEventListener("scroll", handleWindow);
   window.addEventListener("scroll", handleBottom);
+  loadHitokoto();
   loadData();
 });
 onUnmounted(() => {
@@ -230,6 +256,7 @@ onUnmounted(() => {
 .a {
   grid-column: col1-start / col2-start;
   box-shadow: rgba(0, 0, 0, 0.15) 0 15px 25px, rgba(0, 0, 0, 0.05) 5px 5px 10px;
+  background-color: white;
 }
 
 .b {
@@ -241,9 +268,9 @@ onUnmounted(() => {
 }
 
 .boxB {
-  border-radius: 5px;
-  background-color: rgb(81, 196, 199);
+  border-radius: 10px;
   box-shadow: rgba(0, 0, 0, 0.15) 0 15px 25px, rgba(0, 0, 0, 0.05) 5px 5px 10px;
+  background-image: linear-gradient(to top, #fff1eb 0%, #ace0f9 100%);
 }
 
 

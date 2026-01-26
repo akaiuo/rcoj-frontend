@@ -41,13 +41,15 @@
       <a-descriptions>
         <a-descriptions-item> 提交代码：</a-descriptions-item>
       </a-descriptions>
-      <CodeEditor
-        :lang="judgeData?.lang"
-        :value="judgeData?.code"
-        :height="'600px'"
-        :read-only="true"
-        v-if="judgeData?.code !== undefined"
-      />
+      <div style="border: #cccccc solid 2px;">
+        <CodeEditor
+          :lang="judgeData?.lang"
+          :value="judgeData?.code"
+          :height="'600px'"
+          :read-only="true"
+          v-if="judgeData?.code !== undefined"
+        />
+      </div>
     </div>
     <div id="executeInfo" v-if="judgeData?.judgeInfo.message === '编译错误'">
       <a-divider />

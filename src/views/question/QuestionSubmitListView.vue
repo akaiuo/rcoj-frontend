@@ -2,13 +2,14 @@
   <div id="QuestionSubmitListView">
     <a-form :layout="'inline'">
       <a-form-item field="title" label="题目">
-        <a-input v-model="search.title" style="max-width: 400px" />
+        <a-input v-model="search.title" style="max-width: 400px" placeholder="题目id"/>
       </a-form-item>
       <a-form-item field="userName" label="提交用户">
-        <a-input v-model="search.user" style="max-width: 400px" />
+        <a-input v-model="search.user" style="max-width: 400px" placeholder="用户id或用户名"/>
       </a-form-item>
       <a-form-item field="lang" label="语言">
         <a-select :style="{ width: '120px' }" v-model="search.lang">
+          <a-option value="">所有</a-option>
           <a-option>java</a-option>
           <a-option>cpp</a-option>
           <a-option>python</a-option>
@@ -24,7 +25,7 @@
       </a-button>
     </a-form>
     <a-divider />
-    <a-table :columns="columns" :data="dataList" :pagination="false">
+    <a-table :columns="columns" :data="dataList" :pagination="false" :loading="loading">
       <template #submitTime="{ record }">
         {{ moment(record?.submitTime).format() }}
       </template>
@@ -49,6 +50,12 @@
           </a-button>
         </a-space>
       </template>
+      <template #question="{ record }">
+        <span @click="toQuestion(record.questionId)" class="question">{{
+            record.question
+          }}</span>
+      </template>
+      <template #questionId="{ record }"></template>
     </a-table>
     <a-pagination
       :total="total"
@@ -74,6 +81,7 @@ import message from "@arco-design/web-vue/es/message";
 import { useRouter } from "vue-router";
 import moment from "moment/moment";
 import { useStore } from "vuex";
+import {Message} from "@arco-design/web-vue";
 
 const columns = [
   {
@@ -82,7 +90,7 @@ const columns = [
   },
   {
     title: "提交用户",
-    dataIndex: "userId",
+    dataIndex: "userName",
   },
   {
     title: "提交时间",
@@ -90,7 +98,7 @@ const columns = [
   },
   {
     title: "问题",
-    dataIndex: "question",
+    slotName: "question",
   },
   {
     title: "语言",
@@ -112,15 +120,22 @@ const columns = [
     title: "操作",
     slotName: "optional",
   },
+  {
+    slotName: "questionId",
+  },
 ];
 const dataList = ref();
 const total = ref();
+const loading = ref(false);
 
 const req = ref({
   current: 1,
   pageSize: 20,
   sortField: "createTime",
   sortOrder: "descend",
+  questionId: "",
+  user: "",
+  lang: "",
 });
 
 const search = ref({
@@ -140,10 +155,15 @@ const handleMySubmit = () => {
 };
 
 const handleSearch = () => {
-  alert("search" + JSON.stringify(search.value));
+  req.value.questionId = search.value.title;
+  req.value.user = search.value.user;
+  req.value.lang = search.value.lang;
+  loadData()
+  Message.info("search" + JSON.stringify(search.value));
 };
 
 const loadData = async () => {
+  loading.value = true;
   const resp =
     await QuestionControllerService.listQuestionSubmitVoByPageUsingPost(
       req.value
@@ -159,16 +179,18 @@ const loadData = async () => {
   for (let i = 0; i < data.length; i++) {
     dataList.value.push({
       submitId: data[i].id,
-      userId: data[i].userId,
+      userName: data[i].userVO.userName,
       submitTime: data[i].createTime,
-      question: data[i].questionId,
+      question: data[i].questionVO.title,
       lang: data[i].lang,
       judgeState: data[i].judgeInfo.message,
       maxTime: data[i].judgeInfo.maxTime,
       maxMemo: data[i].judgeInfo.maxMemo,
       status: data[i].status,
+      questionId: data[i].questionId,
     });
   }
+  loading.value = false;
 };
 
 const showTime = (time: number) => {
@@ -233,6 +255,12 @@ const judgeState = (status: number, judgeState: string) => {
 onMounted(() => {
   loadData();
 });
+
+const toQuestion = (id: number) => {
+  route.push({
+    path: "/view/question/" + id,
+  });
+};
 </script>
 
 <style scoped>
@@ -257,5 +285,14 @@ onMounted(() => {
     margin: 32px auto;
     width: 1600px;
   }
+}
+
+.question {
+  cursor: pointer;
+}
+
+.question:hover {
+  color: cadetblue;
+  text-decoration: underline;
 }
 </style>

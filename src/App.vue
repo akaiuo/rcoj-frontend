@@ -14,13 +14,14 @@
       <basic-layout />
     </template>
   </div>
-  <vue-live2d
-      :model="['Potion-Maker/Pio', 'school-2017-costume-yellow']"
-      :size="kanbanStyle.size"
-      :direction="kanbanStyle.direction"
-      :style="kanbanStyle.style"
-      v-if="false"
-  ></vue-live2d>
+  <!--纸片人-->
+<!--  <vue-live2d-->
+<!--      :model="['Potion-Maker/Pio', 'school-2017-costume-yellow']"-->
+<!--      :size="kanbanStyle.size"-->
+<!--      :direction="kanbanStyle.direction"-->
+<!--      :style="kanbanStyle.style"-->
+<!--      v-if="false"-->
+<!--  ></vue-live2d>-->
 </template>
 
 <style>
