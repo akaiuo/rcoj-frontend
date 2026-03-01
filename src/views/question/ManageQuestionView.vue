@@ -17,6 +17,12 @@
     </a-form>
     <a-divider size="0" />
     <a-table :columns="columns" :data="dataList" :pagination="false">
+      <template #createTime="{ record }">
+        {{moment(record.createTime).format('YYYY-MM-DD HH:mm:ss')}}
+      </template>
+      <template #updateTime="{ record }">
+        {{moment(record.updateTime).format('YYYY-MM-DD HH:mm:ss')}}
+      </template>
       <template #optional="{ record }">
         <a-space>
           <a-button @click="editRow(record)" type="primary">编辑</a-button>
@@ -51,6 +57,7 @@ import { Question, QuestionControllerService } from "../../../generated";
 import message from "@arco-design/web-vue/es/message";
 import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
+import moment from "moment/moment";
 
 const columns = [
   {
@@ -83,11 +90,11 @@ const columns = [
   },
   {
     title: "创建时间",
-    dataIndex: "createTime",
+    slotName: "createTime",
   },
   {
     title: "更新时间",
-    dataIndex: "updateTime",
+    slotName: "updateTime",
   },
   {
     title: "操作",

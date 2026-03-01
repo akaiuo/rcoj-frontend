@@ -19,6 +19,8 @@
     "@bytemd/plugin-highlight-ssr": "^1.21.0",
     "@bytemd/plugin-math": "^1.21.0",
     "@bytemd/vue-next": "^1.21.0",
+    "@vueuse/core": "^14.2.1",
+    "@wangeditor/editor": "^5.1.23",
     "@wangeditor/editor-for-vue": "^5.1.12",
     "axios": "^1.7.7",
     "core-js": "^3.8.3",

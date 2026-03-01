@@ -18,6 +18,8 @@ import BlogPageView from "@/views/post/PostPageView.vue";
 import PostPageView from "@/views/post/PostPageView.vue";
 import PostEditView from "@/views/post/PostEditView.vue";
 import PostListView from "@/views/post/PostListView.vue";
+import StreamTest from "@/views/StreamTest.vue";
+import component from "*.vue";
 
 export const routes: Array<RouteRecordRaw> = [
   {
@@ -145,4 +147,13 @@ export const routes: Array<RouteRecordRaw> = [
     name: "postEdit",
     component: PostEditView,
   },
+  {
+    path: "/add/solution/:questionId",
+    name: "addSolution",
+    component: PostEditView,
+    props: true,
+    meta: {
+      access: ACCESS_ENUM.USER,
+    }
+  }
 ];

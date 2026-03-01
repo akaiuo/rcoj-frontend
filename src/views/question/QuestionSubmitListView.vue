@@ -27,7 +27,7 @@
     <a-divider />
     <a-table :columns="columns" :data="dataList" :pagination="false" :loading="loading">
       <template #submitTime="{ record }">
-        {{ moment(record?.submitTime).format() }}
+        {{ moment(record?.submitTime).format('YYYY-MM-DD HH:mm:ss') }}
       </template>
       <template #judgeState="{ record }">
         <span :style="stateStyle(record.judgeState)">{{

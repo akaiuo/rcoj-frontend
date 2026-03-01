@@ -40,12 +40,12 @@
         <div>
           <span>创建时间</span>
           <icon-clock-circle :size="24" />
-          <span class="infoVal">{{ moment(form?.createTime).format() }}</span>
+          <span class="infoVal">{{ moment(form?.createTime).format('YYYY-MM-DD HH:mm:ss') }}</span>
         </div>
         <div>
           <span>上次更改时间</span>
           <icon-clock-circle :size="24" />
-          <span class="infoVal">{{ moment(form?.updateTime).format() }}</span>
+          <span class="infoVal">{{ moment(form?.updateTime).format('YYYY-MM-DD HH:mm:ss') }}</span>
         </div>
       </a-space>
     </div>

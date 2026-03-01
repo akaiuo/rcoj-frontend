@@ -1,6 +1,9 @@
 <template>
   <div id="postEditorView">
-    <h1>创建帖子</h1>
+    <h1>创建
+      <span v-if="isAddSolutionPage">题解</span>
+      <span v-else>帖子</span>
+    </h1>
     <a-form auto-label-width :layout="'inline'">
       <a-form-item label="标题" :rules="[{required: true}]">
         <a-input v-model="title" style="max-width: 400px; min-width: 300px" :max-length="{length:40,errorOnly:true}" :word-length="wordLength" show-word-limit/>
@@ -46,6 +49,8 @@ import {ref} from "vue";
 import MdEditor from "@/components/MdEditor.vue";
 import {Message} from "@arco-design/web-vue";
 import {PostControllerService} from "../../../generated/post";
+import {useRoute} from "vue-router";
+import {defineProps, withDefaults} from "vue/dist/vue";
 
 const title = ref("")
 const tags = ref([])
@@ -53,6 +58,14 @@ const contextWang = ref("")
 const textWang = ref("")
 const contextMd = ref("")
 const preview = ref("")
+const route = useRoute()
+const isAddSolutionPage = ref(route.path.includes("add"));
+interface Props {
+  questionId: string;
+}
+const props = withDefaults(defineProps<Props>(), {
+  questionId: () => "",
+});
 
 const valueChange = (data: string) => {
   contextWang.value = data;
@@ -78,12 +91,14 @@ const handleSubmit = async (editorType: number) => {
     Message.warning("内容为空");
     return;
   }
-  const resp = await PostControllerService.addPostUsingPost({
+  let resp;
+  resp = await PostControllerService.addPostUsingPost({
     title: title.value,
     tags: tags.value,
     content: editorType === 1 ? contextWang.value : contextMd.value,
     preview: preview.value == "" ? (editorType === 1 ? getSliceStr(textWang.value, 150) : getSliceStr(contextMd.value, 150)) : preview.value,
     editorType: editorType,
+    questionId: isAddSolutionPage.value ? props.questionId : null,
   });
   if (resp.code != 0) {
     Message.error("发布失败：" + resp.message);

@@ -15,9 +15,9 @@
       <a-button @click="handleSearch" :type="'primary'">搜索</a-button>
     </a-form>
     <a-divider :size="0" />
-    <a-table :columns="columns" :data="dataList" :pagination="false">
+    <a-table :columns="columns" :data="dataList" :pagination="false" :loading="loading">
       <template #title="{ record }">
-        <span @click="toQuestion(record.id)" class="title">{{
+        <span @click="toQuestion(record.id)" class="title" >{{
           record.title
         }}</span>
       </template>
@@ -87,6 +87,7 @@ const columns = [
 
 const total = ref();
 const dataList = ref([]);
+const loading = ref(false);
 
 const req = ref({
   pageSize: 20,
@@ -96,9 +97,11 @@ const req = ref({
 });
 
 const loadData = async () => {
+  loading.value = true;
   const resp = await QuestionControllerService.listQuestionVoByPageUsingPost(
     req.value
   );
+  loading.value = false;
   if (resp.code === 0) {
     dataList.value = resp.data.records;
     total.value = resp.data.total;
@@ -135,11 +138,12 @@ const handleSearch = () => {
 <style scoped>
 .title {
   cursor: pointer;
+  font-size: 15px;
+  font-weight: bold;
 }
 
 .title:hover {
-  color: cadetblue;
-  text-decoration: underline;
+  color: deepskyblue;
 }
 
 #manageQuestionView {

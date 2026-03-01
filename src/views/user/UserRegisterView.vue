@@ -55,6 +55,7 @@
 import {ref} from "vue";
 import {UserControllerService} from "../../../generated/user";
 import {Message} from "@arco-design/web-vue";
+import {useRouter} from "vue-router";
 
 const form = ref({
   userAccount: "",
@@ -89,6 +90,7 @@ const getVertCode = async () => {
 const getVertCodeDisable = () : boolean => {
   return form.value.email == '' || getVertCodeTime.value > 0;
 }
+const router = useRouter();
 
 const handleRegister = async () => {
   const resp = await UserControllerService.userRegisterUsingPost({
@@ -101,9 +103,16 @@ const handleRegister = async () => {
     Message.error("注册失败：" + resp.message);
   }else {
     Message.success("注册成功");
+    // 注册成功后跳转登录页
+    await sleep(1000);
+    await router.push({
+      path: "/user/login"
+    })
   }
 }
-
+function sleep(ms: number): Promise<void> {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
 const checkParam = () : boolean => {
   if (form.value.userAccount === "" || form.value.userAccount.charAt(0) === " ") {
     return false;

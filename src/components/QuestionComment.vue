@@ -31,7 +31,7 @@
     </a-space>
     <a-divider size="0" />
     <div v-for="(val, idx) in comments" :key="val.commentId">
-      <a-comment :author="val.author" :datetime="val.dateTime">
+      <a-comment :author="val.author" :datetime="moment(val.dateTime).format('YYYY-MM-DD HH:mm:ss')">
         <template #content>
           <MdViewer :value="val.content" />
         </template>
@@ -64,7 +64,14 @@
       </a-comment>
       <a-divider :type="'solid'" :margin="15" :size="0" />
     </div>
-    <a-pagination :total="100" :page-size="10" />
+    <a-pagination
+      :total="page.total"
+      show-total
+      v-model:page-size="req.pageSize"
+      v-model:current="req.current"
+      @update:current="loadData"
+      @update:page-size="loadData"
+    />
   </div>
 </template>
 
@@ -75,6 +82,7 @@ import MdEditor from "@/components/MdEditor.vue";
 import { QuestionControllerService } from "../../generated/question";
 import { Message } from "@arco-design/web-vue";
 import { useStore } from "vuex";
+import moment from "moment/moment";
 
 const store = useStore();
 
@@ -133,6 +141,11 @@ const req = ref({
   sortOrder: "descend",
 });
 
+const page = ref({
+  total: 0,
+  current: 0,
+});
+
 const loadData = async () => {
   const resp =
     await QuestionControllerService.postCommentsByQuestionIdUsingPost(
@@ -142,6 +155,8 @@ const loadData = async () => {
     Message.error(resp.message);
     return;
   }
+  page.value.total = resp.data.total;
+  page.value.current = resp.data.current;
   comments.value = [];
   for (const record of resp.data.records) {
     console.log(record);

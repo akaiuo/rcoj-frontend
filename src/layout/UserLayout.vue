@@ -3,6 +3,7 @@
     <div id="userLayout">
       <a-layout>
         <a-layout-header class="header">
+          <icon-left size="36"style="font-size: 36px; position: fixed; margin: 24px;" @click="clickBackWard" class="icon-left"/>
           <div class="title-bar">
             <img class="logo" src="../assets/rc-logo.png" />
             <span class="logo-text">RCOJ</span>
@@ -21,7 +22,18 @@
   </div>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import {useRoute, useRouter} from "vue-router";
+
+const router = useRouter();
+const route = useRoute();
+const clickBackWard = () => {
+  router.push({
+    path: (route.query.redirect as string) ?? "/",
+    replace: true,
+  });
+}
+</script>
 
 <style scoped>
 #userLayout {
@@ -68,5 +80,16 @@
   color: black;
   font-size: 28px;
   margin-left: 16px;
+}
+
+.icon-left {
+  font-size: 16px;
+  cursor: pointer;
+  padding: 5px 10px;
+}
+
+.icon-left:hover {
+  color: royalblue;
+  background: var(--color-fill-3);
 }
 </style>

@@ -61,7 +61,7 @@
           </a-tab-pane>
           <a-tab-pane key="answer" title="题解" style="z-index: 1">
             <a-card class="card">
-              <QuestionBlog />
+              <QuestionSolution :question-id="props.id"/>
             </a-card>
           </a-tab-pane>
         </a-tabs>
@@ -200,8 +200,9 @@ import message from "@arco-design/web-vue/es/message";
 import MdViewer from "@/components/MdViewer.vue";
 import CodeEditor from "@/components/codeEditor.vue";
 import QuestionComment from "@/components/QuestionComment.vue";
-import QuestionBlog from "@/components/QuestionBlog.vue";
+import QuestionSolution from "@/components/QuestionSolution.vue";
 import {Modal} from "@arco-design/web-vue";
+import {useTitle} from "@vueuse/core";
 
 interface Props {
   id: string;
@@ -219,6 +220,8 @@ const editorSettings = ref({
 
 const infoVisible = ref(false);
 
+const pageTitle = useTitle();
+
 const question = ref();
 const loadData = async () => {
   const resp = await QuestionControllerService.getQuestionVoByIdUsingGet(
@@ -226,6 +229,7 @@ const loadData = async () => {
   );
   if (resp.code === 0) {
     question.value = resp.data;
+    pageTitle.value = "whoj-" + question.value.title;
   } else {
     message.error("题目加载失败：" + resp.message);
   }

@@ -58,20 +58,20 @@
             <a-date-picker
                 style="width: 200px"
                 show-time
-                format="YYYY-MM-DD hh:mm:ss"
+                format="YYYY-MM-DD HH:mm:ss"
                 placeholder="该时间点之后"
                 v-model="req.createAfter"
-                value-format="YYYY-MM-DDThh:mm:ss"
+                value-format="YYYY-MM-DDTHH:mm:ssZ"
             />
           </a-form-item>
           <a-form-item>
             <a-date-picker
                 style="width: 200px;"
                 show-time
-                format="YYYY-MM-DD hh:mm:ss"
+                format="YYYY-MM-DD HH:mm:ss"
                 placeholder="该时间点之前"
                 v-model="req.createBefore"
-                value-format="YYYY-MM-DDThh:mm:ss"
+                value-format="YYYY-MM-DDTHH:mm:ssZ"
             />
           </a-form-item>
           <a-form-item>

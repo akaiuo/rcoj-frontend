@@ -19,10 +19,10 @@
         {{ judgeData?.userId }}
       </a-descriptions-item>
       <a-descriptions-item label="提交时间">
-        {{ moment(judgeData?.createTime).format() }}
+        {{ moment(judgeData?.createTime).format('YYYY-MM-DD HH:mm:ss') }}
       </a-descriptions-item>
       <a-descriptions-item label="判题时间">
-        {{ moment(judgeData?.updateTime).format() }}
+        {{ moment(judgeData?.updateTime).format('YYYY-MM-DD HH:mm:ss') }}
       </a-descriptions-item>
       <a-descriptions-item label="判题结果">
         <span :style="stateStyle(judgeData?.judgeInfo.message)">{{
@@ -45,7 +45,7 @@
         <CodeEditor
           :lang="judgeData?.lang"
           :value="judgeData?.code"
-          :height="'600px'"
+          :height="'550px'"
           :read-only="true"
           v-if="judgeData?.code !== undefined"
         />
@@ -54,16 +54,19 @@
     <div id="executeInfo" v-if="judgeData?.judgeInfo.message === '编译错误'">
       <a-divider />
       <a-descriptions>
-        <a-descriptions-item> 编译器输出：</a-descriptions-item>
+        <a-descriptions-item> 编译器输出：
+          <a-button type="primary" @click="aiErrorAnalysis()">AI分析</a-button></a-descriptions-item>
       </a-descriptions>
-      <CodeEditor
-        :lang="'ssh'"
-        :value="judgeData?.executeMessage ?? ''"
-        :height="'200px'"
-        :read-only="true"
-        v-if="judgeData?.executeMessage !== undefined"
-        :line-numbers="'off'"
-      />
+      <div style="border: #cccccc solid 2px;">
+        <CodeEditor
+          :lang="'ssh'"
+          :value="judgeData?.executeMessage ?? ''"
+          :height="'250px'"
+          :read-only="true"
+          v-if="judgeData?.executeMessage !== undefined"
+          :line-numbers="'off'"
+        />
+      </div>
     </div>
     <div id="judgeList" v-else>
       <a-divider />
@@ -111,16 +114,29 @@
         </template>
       </a-table>
     </div>
+    <a-modal
+        v-model:visible="aiModelVisible"
+        @ok="aiModelVisible = false"
+        :width="800"
+        hide-cancel
+    >
+      <template #title> AI分析</template>
+<!--      <md-viewer :value="aiAnalysis.join('')" :handle-change="aiAnalysisHandleChange" style="min-height: 300px"/>-->
+      <div style="min-height: 300px">
+        <span v-html="aiAnalysis.join('')"/>
+      </div>
+    </a-modal>
   </div>
 </template>
 
 <script setup lang="ts">
 import { defineProps, onMounted, ref, withDefaults } from "vue";
-import { QuestionControllerService } from "../../../generated";
+import { QuestionControllerService } from "../../../generated/question";
 import { Message } from "@arco-design/web-vue";
 import CodeEditor from "@/components/codeEditor.vue";
 import JUDGE_ENUM from "@/enums/judgeEnum";
 import moment from "moment/moment";
+import MdViewer from "@/components/MdViewer.vue";
 
 interface Props {
   submitId: string;
@@ -155,6 +171,9 @@ const columns = [
 
 const judgeList = ref();
 let judgeData = ref();
+const aiAnalysis = ref(["思考中..."]);
+const aiModelVisible = ref(false);
+const hasAIAnalysis = ref(false);
 const loadData = async () => {
   const resp = await QuestionControllerService.getQuestionSubmitVoByIdUsingPost(
     props.submitId as any
@@ -247,6 +266,65 @@ const stateStyle = (judgeState: string) => {
     };
   }
 };
+
+const isThinking = ref(true);
+const aiErrorAnalysis = async () => {
+  aiModelVisible.value = true;
+  if (hasAIAnalysis.value) return;
+  // const resp = await QuestionControllerService.errorAnswerAiAnalysisUsingGet(props.submitId as any);
+  let eventSource = new EventSource('/api/question/errorAnswerAIAnalysisStream?questionSubmitId=' + props.submitId);
+  hasAIAnalysis.value = true;
+  eventSource.onmessage = (event) => {
+    if (isThinking.value) {
+      aiAnalysis.value = [];
+    }
+    isThinking.value = false;
+    console.log(event)
+    let originalData = event.data.replace(/#n/g, '<br/>');
+    originalData = originalData.replace(/ /g, '&nbsp;');
+    aiAnalysis.value.push(originalData);
+  }
+  eventSource.onerror = (error) => {
+    console.error("SSE 异常：", error);
+    eventSource.close();
+  };
+}
+
+// const aiErrorAnalysis = async () => {
+//   // const resp = await QuestionControllerService.errorAnswerAiAnalysisUsingGet(props.submitId as any);
+//   let eventSource = new EventSource('/api/question/errorAnswerAIAnalysisStreamSSE?questionSubmitId=' + props.submitId);
+//
+//   eventSource.onmessage = (event) => {
+//     try {
+//       // Parse the ServerSentEvent data
+//       const sseData = JSON.parse(event.data);
+//       if (sseData.data) {
+//         aiAnalysis.value = aiAnalysis.value.concat(sseData.data);
+//         console.log(sseData.data);
+//       }
+//     } catch (e) {
+//       // Fallback: if it's not JSON, treat as plain text
+//       aiAnalysis.value = aiAnalysis.value.concat(event.data);
+//       console.log(event.data);
+//     }
+//   }
+//
+//   // Handle specific event types if needed
+//   eventSource.addEventListener('complete', (event) => {
+//     console.log("SSE stream completed");
+//     eventSource.close();
+//   });
+//
+//   eventSource.onerror = (error) => {
+//     console.error("SSE 异常：", error);
+//     eventSource.close();
+//   };
+// }
+
+const aiAnalysisHandleChange = (val: string) => {
+  aiAnalysis.value = val;
+};
+
 
 onMounted(() => {
   loadData();

@@ -8,10 +8,10 @@
             <span>{{ author.username }}</span>
           </a-descriptions-item>
           <a-descriptions-item label="发布时间">
-            <span>{{moment(post.createTime).format()}}</span>
+            <span>{{moment(post.createTime).format('YYYY-MM-DD HH:mm:ss')}}</span>
           </a-descriptions-item>
           <a-descriptions-item label="修改时间">
-            <span>{{ moment(post.updateTime).format() }}</span>
+            <span>{{ moment(post.updateTime).format('YYYY-MM-DD HH:mm:ss') }}</span>
           </a-descriptions-item>
         </a-descriptions>
         <a-space>
@@ -129,7 +129,7 @@ import MdViewer from "@/components/MdViewer.vue";
 import {useStore} from "vuex";
 import moment from "moment";
 import PostComment from "@/components/PostComment.vue";
-
+import { useTitle } from '@vueuse/core';
 
 interface Props {
   id: string;
@@ -142,11 +142,11 @@ const props = withDefaults(defineProps<Props>(), {
 const store  = useStore();
 
 const post = ref({
-  title: "Hello World",
-  text: "<p><h2>hello world</h2><br/><br/><br/><br/><br/><br/><br/><p>dsd</p><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><p>hhh</p></p>",
+  title: "",
+  text: "",
   tags: [],
-  updateTime: "2025-01-05T15:24:28+08:00",
-  createTime: "2025-01-05T15:24:28+08:00",
+  updateTime: "",
+  createTime: "",
   editorType: 1,
   favourNum: -1,
   starNum: -1,
@@ -156,10 +156,12 @@ const post = ref({
 });
 const author = ref({
   avatar:
-    "https://p1-arco.byteimg.com/tos-cn-i-uwbnlip3yd/3ee5f13fb09879ecb5185e440cef6eb9.png~tplv-uwbnlip3yd-webp.webp",
-  username: "abcd",
-  id: "34151235",
+    "",
+  username: "",
+  id: "",
 });
+
+const pageTitle = useTitle();
 
 const loadData = async () => {
   const resp = await PostControllerService.getPostUsingGet(props.id as any);
@@ -190,6 +192,8 @@ const loadData = async () => {
     for (const s of data?.tags ?? []) {
       post.value.tags.push(s)
     }
+
+    pageTitle.value = data.title;
   }
 }
 
@@ -249,6 +253,7 @@ const scrollToTop = () => {
   });
 };
 
+
 onMounted(() => {
   window.addEventListener("scroll", handleWindow);
   loadData()
@@ -260,6 +265,7 @@ onUnmounted(() => {
 
 <style scoped>
 #postPageView {
+
 }
 
 #post {
