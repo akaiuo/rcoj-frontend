@@ -121,16 +121,16 @@
         hide-cancel
     >
       <template #title> AI分析</template>
-<!--      <md-viewer :value="aiAnalysis.join('')" :handle-change="aiAnalysisHandleChange" style="min-height: 300px"/>-->
-      <div style="min-height: 300px">
-        <span v-html="aiAnalysis.join('')"/>
-      </div>
+      <md-viewer :value="aiAnalysis.join('')" :handle-change="aiAnalysisHandleChange" style="min-height: 300px"/>
+<!--      <div style="min-height: 300px">-->
+<!--        <span v-html="aiAnalysis.join('')"/>-->
+<!--      </div>-->
     </a-modal>
   </div>
 </template>
 
 <script setup lang="ts">
-import { defineProps, onMounted, ref, withDefaults } from "vue";
+import {defineProps, onBeforeUnmount, onMounted, ref, withDefaults} from "vue";
 import { QuestionControllerService } from "../../../generated/question";
 import { Message } from "@arco-design/web-vue";
 import CodeEditor from "@/components/codeEditor.vue";
@@ -280,8 +280,8 @@ const aiErrorAnalysis = async () => {
     }
     isThinking.value = false;
     console.log(event)
-    let originalData = event.data.replace(/#n/g, '<br/>');
-    originalData = originalData.replace(/ /g, '&nbsp;');
+    let originalData = event.data.replace(/#n/g, '\n');
+    originalData = originalData.replace(/#sp/g, ' ');
     aiAnalysis.value.push(originalData);
   }
   eventSource.onerror = (error) => {
@@ -329,6 +329,10 @@ const aiAnalysisHandleChange = (val: string) => {
 onMounted(() => {
   loadData();
 });
+
+onBeforeUnmount(() => {
+  aiAnalysis.value = []
+})
 </script>
 
 <style scoped>
