@@ -29,7 +29,7 @@
         </span>
         <template #content>
           <a-doption @click="handleUserCenter">我的主页</a-doption>
-          <a-doption @click="handleLogout">退出登录</a-doption>
+          <a-doption @click="handleLogout"><span style="color: red">退出登录</span></a-doption>
         </template>
       </a-dropdown>
       <div v-else>
